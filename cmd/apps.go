@@ -56,6 +56,8 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// appsCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	appsCmd.Flags().BoolP("details", "d", false, "Show details of the apps")
+	appsCmd.Flags().BoolP("numbers", "n", false, "Show the index numbers of the applications")
 }
 
 type AppsResponse struct {
@@ -91,7 +93,31 @@ func runApps(cmd *cobra.Command, args []string) {
 		log.Fatalln(err)
 	}
 
-	for _, a := range apps.Apps {
-		fmt.Println(a.Repo)
+	details, err := cmd.Flags().GetBool("details")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	numbers, err := cmd.Flags().GetBool("numbers")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	for i, a := range apps.Apps {
+		if numbers {
+			fmt.Printf("%d | %s\n", i, a.Repo)
+		} else {
+			fmt.Println(a.Repo)
+		}
+
+		if details {
+			fmt.Printf("        Status: %t\n", a.Status)
+			fmt.Printf("        AutoDeploy: %s\n", a.AutoDeploy)
+			fmt.Printf("        DefaultEnv: %s\n", a.DefaultEnv)
+			fmt.Printf("        Endpoint: %s\n", a.Endpoint)
+			fmt.Printf("        DisplayName: %s\n", a.DisplayName)
+			fmt.Printf("        CreatedAt: %s\n", time.Unix(int64(a.CreatedAt), 0))
+			fmt.Printf("        DeployedAt: %s\n", time.Unix(int64(a.DeployedAt), 0))
+			fmt.Println()
+		}
 	}
 }
