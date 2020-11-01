@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -102,21 +103,24 @@ func runApps(cmd *cobra.Command, args []string) {
 		log.Fatalln(err)
 	}
 
+	printf := "%" + strconv.Itoa(len(apps.Apps)-1) + "v %s\n"
+	tabf := fmt.Sprintf("%" + strconv.Itoa(len(apps.Apps)-1) + "v    ", "")
 	for i, a := range apps.Apps {
 		if numbers {
-			fmt.Printf("%d | %s\n", i, a.Repo)
+			//fmt.Printf("%d | %s\n", i, a.Repo)
+			fmt.Printf(printf, i, a.Repo)
 		} else {
 			fmt.Println(a.Repo)
 		}
 
 		if details {
-			fmt.Printf("        Status: %t\n", a.Status)
-			fmt.Printf("        AutoDeploy: %s\n", a.AutoDeploy)
-			fmt.Printf("        DefaultEnv: %s\n", a.DefaultEnv)
-			fmt.Printf("        Endpoint: %s\n", a.Endpoint)
-			fmt.Printf("        DisplayName: %s\n", a.DisplayName)
-			fmt.Printf("        CreatedAt: %s\n", time.Unix(int64(a.CreatedAt), 0))
-			fmt.Printf("        DeployedAt: %s\n", time.Unix(int64(a.DeployedAt), 0))
+			fmt.Printf("%sStatus: %t\n", tabf, a.Status)
+			fmt.Printf("%sAutoDeploy: %s\n", tabf, a.AutoDeploy)
+			fmt.Printf("%sDefaultEnv: %s\n", tabf, a.DefaultEnv)
+			fmt.Printf("%sEndpoint: %s\n", tabf, a.Endpoint)
+			fmt.Printf("%sDisplayName: %s\n", tabf, a.DisplayName)
+			fmt.Printf("%sCreatedAt: %s\n", tabf, time.Unix(int64(a.CreatedAt), 0))
+			fmt.Printf("%sDeployedAt: %s\n", tabf, time.Unix(int64(a.DeployedAt), 0))
 			fmt.Println()
 		}
 	}
