@@ -21,6 +21,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
@@ -73,6 +74,7 @@ func runApps(cmd *cobra.Command, args []string) {
 
 	request, err := http.NewRequest("GET", fmt.Sprintf("https://api.stormkit.io/apps"), nil)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatalln(err)
 	}
 	bearerToken := viper.GetString("app.bearer_token")
@@ -80,7 +82,13 @@ func runApps(cmd *cobra.Command, args []string) {
 	
 	resp, err := client.Do(request)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatalln(err)
+	}
+
+	if resp.StatusCode != 200 {
+		fmt.Printf("Error in request (%s)\n", resp.Status)
+		os.Exit(1)
 	}
 
 	defer resp.Body.Close()
