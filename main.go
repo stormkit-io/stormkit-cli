@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/giuliobosco/stormcli/cmd"
+import "github.com/stormkit-io/stormkit-cli/cmd"
 
 func main() {
 	cmd.Execute()

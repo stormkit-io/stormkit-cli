@@ -26,7 +26,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/giuliobosco/stormcli/model"
+	"github.com/stormkit-io/stormkit-cli/model"
 )
 
 // appsCmd represents the apps command

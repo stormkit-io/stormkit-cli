@@ -1,4 +1,4 @@
-module github.com/giuliobosco/stormcli
+module github.com/stormkit-io/stormkit-cli
 
 go 1.12
 
