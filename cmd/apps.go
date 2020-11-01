@@ -24,10 +24,9 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/giuliobosco/stormcli/model"
 )
-
-const authBearer = ""
 
 // appsCmd represents the apps command
 var appsCmd = &cobra.Command{
@@ -73,7 +72,8 @@ func runApps(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", authBearer))
+	bearerToken := viper.GetString("app.bearer_token")
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", bearerToken))
 	
 	resp, err := client.Do(request)
 	if err != nil {
