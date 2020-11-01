@@ -8,19 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestConfig(t *testing.T) {
-	// setting data in viper
-	expectedServer := "aaaa"
+const expectedServer = "aaaa"
+const expectedBearerToken = "bbbb"
+const expectedClientTimeout = 5000
+const expectedUseHTTPS = true
+
+// viperInit initialize viper for testing
+func viperInit() {
 	viper.Set(serverString, expectedServer)
-
-	expectedBearerToken := "bbbbb"
 	viper.Set(bearerTokenString, expectedBearerToken)
-
-	expectedClientTimeout := 5000
 	viper.Set(clientTimeoutString, expectedClientTimeout)
-
-	expectedUseHTTPS := true
 	viper.Set(useHTTPSString, expectedUseHTTPS)
+}
+
+func TestConfig(t *testing.T) {
+	viperInit()
 
 	// run Config
 	Config()
