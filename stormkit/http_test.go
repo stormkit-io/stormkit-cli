@@ -1,9 +1,9 @@
 package stormkit
 
 import (
+	"net/http"
 	"testing"
 	"time"
-	"net/http"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -68,4 +68,3 @@ func TestRequestDelete(t *testing.T) {
 	assert.Equal(t, http.MethodDelete, r.Method)
 	assert.Nil(t, err)
 }
-

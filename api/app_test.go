@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 	"github.com/stormkit-io/stormkit-cli/testutils"
 	"github.com/stretchr/testify/assert"
-	"github.com/spf13/viper"
 )
 
 // expectedApps is mock apps data for tests
@@ -16,11 +16,11 @@ var ExpectedApps = Apps{
 	Apps: []App{
 		{
 			Repo: "repo1",
-			ID: "1234",
+			ID:   "1234",
 		},
 		{
 			Repo: "repo2",
-			ID: "12345",
+			ID:   "12345",
 		},
 	},
 }
@@ -62,4 +62,3 @@ func TestGetApps403(t *testing.T) {
 	assert.Nil(t, apps)
 	assert.Contains(t, err.Error(), http.StatusText(http.StatusForbidden))
 }
-

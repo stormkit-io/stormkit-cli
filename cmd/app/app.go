@@ -1,4 +1,5 @@
 package app
+
 /*
 Copyright © 2020 NAME HERE <EMAIL ADDRESS>
 
@@ -18,8 +19,8 @@ limitations under the License.
 import (
 	"fmt"
 
-	"github.com/stormkit-io/stormkit-cli/cmd"
 	"github.com/spf13/cobra"
+	"github.com/stormkit-io/stormkit-cli/cmd"
 )
 
 // appCmd represents the app command

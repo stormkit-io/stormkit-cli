@@ -45,7 +45,7 @@ func TestEngineAppID(t *testing.T) {
 
 	assert.Equal(t, expectedEngineAppID, engineAppID)
 	assert.Equal(t, expectedEngineAppID, GetEngineAppID())
-	
+
 	localEngineAppID := "test"
 
 	SetEngineAppID(localEngineAppID)

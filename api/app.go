@@ -68,8 +68,6 @@ func GetApps() (*Apps, error) {
 
 	var a Apps
 	err = json.Unmarshal(body, &a)
-	
+
 	return &a, err
 }
-
-

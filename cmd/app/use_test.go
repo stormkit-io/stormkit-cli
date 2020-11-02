@@ -6,18 +6,18 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/stormkit-io/stormkit-cli/api"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 	"github.com/stormkit-io/stormkit-cli/testutils"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
 )
 
 var expectedApps = api.Apps{
 	Apps: []api.App{
-		{ ID: "123", Repo: "repo0" },
-		{ ID: "124", Repo: "repo1" },
+		{ID: "123", Repo: "repo0"},
+		{ID: "124", Repo: "repo1"},
 	},
 }
 
@@ -27,7 +27,7 @@ func runAppUseInit() (*httptest.Server, *cobra.Command) {
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
 	stormkit.Config()
-	
+
 	cmd := cobra.Command{}
 	cmd.Flags().String("app-id", "", "")
 
