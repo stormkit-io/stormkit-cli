@@ -40,7 +40,8 @@ func GetEngineAppID() string {
 }
 
 // SetEngineAppID set the value in engineAppID and in the stormkit file
-func SetEngineAppID(a string) {
+func SetEngineAppID(a string) error {
 	engineAppID = a
 	viper.Set(engineAppIDString, a)
+	return viper.WriteConfig()
 }
