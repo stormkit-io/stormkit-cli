@@ -13,6 +13,8 @@ const getApps = "/apps"
 
 // App is the model of an app
 type App struct {
+	// ID of the app
+	ID string `json:"id"`
 	// Repo is the repository of the app
 	Repo string `json:"repo"`
 	// DisplayName UNKOWN
