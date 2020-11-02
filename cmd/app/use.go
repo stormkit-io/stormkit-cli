@@ -16,8 +16,7 @@ limitations under the License.
 */
 
 import (
-	"fmt"
-	"os"
+	"errors"
 	"strconv"
 
 	"github.com/stormkit-io/stormkit-cli/api"
@@ -35,7 +34,7 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: runAppUse,
+	RunE: runAppUse,
 }
 
 func init() {
@@ -44,36 +43,32 @@ func init() {
 	useCmd.Flags().StringP("app-id", "a", "", "ID of the app to use")
 }
 
-func runAppUse(cmd *cobra.Command, args []string) {
+func runAppUse(cmd *cobra.Command, args []string) error {
 	// Fetch Apps from  API
 	apps, err := api.GetApps()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	// Check if using app-id flag
 	appID, err := cmd.Flags().GetString("app-id")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 	if len(appID) > 0 {
 		for _, a := range apps.Apps {
 			if a.ID == appID {
 				stormkit.SetEngineAppID(a.ID)
-				return
+				return nil
 			}
 		}
 
-		fmt.Println("App not found!")
-		os.Exit(1)
+		return errors.New("no app found")
 	}
 
 	// check if arguments are present
 	if len(args) == 0 {
-		fmt.Println("Not enought arguments")
-		os.Exit(1)
+		return errors.New("not enought arguments")
 	}
 
 	// using repo name or index
@@ -82,19 +77,18 @@ func runAppUse(cmd *cobra.Command, args []string) {
 			for _, a := range apps.Apps {
 			if a.Repo == args[0] {
 				stormkit.SetEngineAppID(a.ID)
-				return
+				return nil
 			}
 		}
 
-		fmt.Println("App not found!")
-		os.Exit(1)
+		return errors.New("app not found")
 	}
 	
 	// checking index
 	if index >= len(apps.Apps) {
-		fmt.Println("Index too large")
-		os.Exit(1)
+		return errors.New("index too large")
 	}
 
 	stormkit.SetEngineAppID(apps.Apps[index].ID)
+	return nil
 }
