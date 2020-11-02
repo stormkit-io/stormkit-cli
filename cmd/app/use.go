@@ -27,13 +27,26 @@ import (
 // useCmd represents the use command
 var useCmd = &cobra.Command{
 	Use:   "use",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Select an application to work on",
+	Long: `Select an application where to work on, via his repo name, id or index.
+Via his repo name:
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+$ stormkit-cli app use <repo_name>
+
+Via his id:
+
+$ stormkit-cli app use --app-id <app_id>
+
+Via his index:
+
+$ stormkit-cli app ls -n
+0 github/myuser/my-project
+$ stormkit-cli app use 0
+
+This command is useful when you are not in the directory of your repository.
+It keeps his memory in the config file, at: app.engine.app_id.
+Be carefull this wouldn't work if you are in the direcotry of another 
+stormkit project.`,
 	RunE: runAppUse,
 }
 
@@ -89,6 +102,7 @@ func runAppUse(cmd *cobra.Command, args []string) error {
 		return errors.New("index too large")
 	}
 
+	// using index
 	stormkit.SetEngineAppID(apps.Apps[index].ID)
 	return nil
 }
