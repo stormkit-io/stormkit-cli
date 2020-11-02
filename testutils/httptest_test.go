@@ -4,17 +4,17 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"testing"
 	"net/http"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 // customResponseWriter is a quick implementation of ResponseWriter
 type customResponseWriter struct {
-	body []byte
+	body       []byte
 	statusCode int
-	header http.Header
+	header     http.Header
 }
 
 // Header returns the header of the customResponseWriter
@@ -35,7 +35,7 @@ func (w *customResponseWriter) WriteHeader(statusCode int) {
 
 // TestResponseMocker check the responseMocker method
 func TestResponseMocker(t *testing.T) {
-	expectedBytes := []byte{0,0,0}
+	expectedBytes := []byte{0, 0, 0}
 	expectedCode := 200
 	f := responseMocker(expectedBytes, expectedCode)
 
@@ -49,7 +49,7 @@ func TestResponseMocker(t *testing.T) {
 }
 
 func TestServerMock(t *testing.T) {
-	expectedBytes := []byte{10,20,30,40}
+	expectedBytes := []byte{10, 20, 30, 40}
 	expectedCode := 200
 	api := "/api"
 
@@ -57,10 +57,10 @@ func TestServerMock(t *testing.T) {
 	defer s.Close()
 
 	fmt.Println(s.URL + api)
-	request, err := http.NewRequest(http.MethodGet, s.URL + api, bytes.NewReader(expectedBytes))
+	request, err := http.NewRequest(http.MethodGet, s.URL+api, bytes.NewReader(expectedBytes))
 	assert.Nil(t, err)
 	c := http.Client{}
-	
+
 	response, err := c.Do(request)
 	assert.Nil(t, err)
 

@@ -2,8 +2,8 @@ package stormkit
 
 import (
 	"fmt"
-	"net/http"
 	"io"
+	"net/http"
 )
 
 // authorizationHeaderString
@@ -13,7 +13,7 @@ const authorizationHeaderString = "Authorization"
 var client *http.Client
 
 // GetClient build the http client
-func GetClient() (*http.Client) {
+func GetClient() *http.Client {
 	if client == nil {
 		client = &http.Client{
 			Timeout: clientTimeout,
@@ -32,7 +32,7 @@ func request(m, api string, body io.Reader) (*http.Request, error) {
 	}
 	protocol += "://"
 
-	url := protocol + server + api 
+	url := protocol + server + api
 	r, err := http.NewRequest(m, url, body)
 
 	if err != nil {

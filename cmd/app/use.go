@@ -1,4 +1,5 @@
 package app
+
 /*
 Copyright © 2020 NAME HERE <EMAIL ADDRESS>
 
@@ -19,9 +20,9 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/spf13/cobra"
 	"github.com/stormkit-io/stormkit-cli/api"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
-	"github.com/spf13/cobra"
 )
 
 // useCmd represents the use command
@@ -87,7 +88,7 @@ func runAppUse(cmd *cobra.Command, args []string) error {
 	// using repo name or index
 	index, err := strconv.Atoi(args[0])
 	if err != nil {
-			for _, a := range apps.Apps {
+		for _, a := range apps.Apps {
 			if a.Repo == args[0] {
 				stormkit.SetEngineAppID(a.ID)
 				return nil
@@ -96,7 +97,7 @@ func runAppUse(cmd *cobra.Command, args []string) error {
 
 		return errors.New("app not found")
 	}
-	
+
 	// checking index
 	if index >= len(apps.Apps) {
 		return errors.New("index too large")

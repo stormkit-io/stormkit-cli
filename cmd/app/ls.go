@@ -1,4 +1,5 @@
 package app
+
 /*
 Copyright © 2020 NAME HERE <EMAIL ADDRESS>
 
@@ -63,9 +64,9 @@ func runAppLs(cmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	lenf := strconv.Itoa(len(apps.Apps)-1)
+	lenf := strconv.Itoa(len(apps.Apps) - 1)
 	printf := "%" + lenf + "v %s\n"
-	tabf := fmt.Sprintf("%" + lenf + "v    ", "")
+	tabf := fmt.Sprintf("%"+lenf+"v    ", "")
 
 	for i, a := range apps.Apps {
 		if numbers {

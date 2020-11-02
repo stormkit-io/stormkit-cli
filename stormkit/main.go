@@ -7,21 +7,25 @@ import (
 )
 
 const (
-	serverString = "app.server" // is the key of server configuration
-	bearerTokenString = "app.bearer_token" // is the key of bearer token configuration
+	serverString        = "app.server"         // is the key of server configuration
+	bearerTokenString   = "app.bearer_token"   // is the key of bearer token configuration
 	clientTimeoutString = "app.client_timeout" // is the timeout of the http client
-	useHTTPSString = "app.https" // is the flag for use https
-	engineAppIDString = "app.engine.app_id" // is the place for store the app_id
+	useHTTPSString      = "app.https"          // is the flag for use https
+	engineAppIDString   = "app.engine.app_id"  // is the place for store the app_id
 )
 
 // server is the address to the server
 var server string
+
 // bearerToken is used to access http
 var bearerToken string
+
 // clientTimeout is the timeout of the http client
 var clientTimeout time.Duration
+
 // useHTTPS is the flag for use https in http requests
 var useHTTPS bool
+
 // engineAppID is the place for store the active app_id
 var engineAppID string
 

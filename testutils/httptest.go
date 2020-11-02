@@ -25,4 +25,3 @@ func responseMocker(b []byte, c int) func(w http.ResponseWriter, r *http.Request
 		w.Write(b)
 	}
 }
-
