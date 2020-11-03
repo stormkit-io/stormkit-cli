@@ -67,3 +67,7 @@ app:
   https: true
   server: api.stormkit.io
 ```
+
+## Open Source
+
+You can check the [LICENSE](/LICENSE) for more information.
