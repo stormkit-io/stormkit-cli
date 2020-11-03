@@ -1,4 +1,4 @@
-# stormcli
+# stormkit-cli
 
 Is a tool for manage [Stormkit.io](https://stormkit.io) via CLI.
 
@@ -8,9 +8,9 @@ To install, just install go on you machine. Then clone the repository.
 
 ```
 # ssh
-git clone git@github.com:giuliobosco/stormcli.git
+git clone git@github.com:stormkit-io/stormkit-cli.git && cd stormkit-cli
 # or http
-git clone https://github.com/giuliobosco/stormcli.git
+git clone https://github.com/stormkit-io/stormkit-cli.git && cd stormkit-cli
 ```
 
 And just install it or build it
@@ -29,10 +29,10 @@ go build .
 list 
 
 ```
-$ stormcli apps
+$ stormkit-cli app ls
 github/stormkit-dev/sample-project
 github/giuliobosco/web-project
-$ stormcli apps -numbers -details # stormcli apps -nd
+$ stormkit-cli app ls -numbers -details # stormkit-cli app ls -nd
 0 | github/stormkit-dev/sample-project
         Status: true
         AutoDeploy: commit
@@ -61,4 +61,9 @@ File `~/stormcli.yaml`:
 ```
 app:
   bearer_token: "token" #bearer authentication token
+  clienttimeout: 5000
+  engine:
+    app_id: "app_id" # id of the actual using app
+  https: true
+  server: api.stormkit.io
 ```
