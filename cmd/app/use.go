@@ -33,22 +33,6 @@ func runAppUse(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Check if using app-id flag
-	appID, err := cmd.Flags().GetString("app-id")
-	if err != nil {
-		return err
-	}
-	if len(appID) > 0 {
-		for _, a := range apps.Apps {
-			if a.ID == appID {
-				stormkit.SetEngineAppID(a.ID)
-				return nil
-			}
-		}
-
-		return errors.New("no app found")
-	}
-
 	// check if arguments are present
 	if len(args) == 0 {
 		return errors.New("not enought arguments")
