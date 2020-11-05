@@ -12,7 +12,7 @@ func testGitRoot(t *testing.T, stdout string) {
 	assert.Nil(t, err)
 }
 
-func TestGitRoot(t *testing.T) {
+func TestGetGitRoot(t *testing.T) {
 	runTestFakeCommand(t, "/home/g/go/src/stormkit-cli", 0, testGitRoot)
 }
 
