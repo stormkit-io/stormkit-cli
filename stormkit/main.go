@@ -1,6 +1,8 @@
 package stormkit
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/spf13/viper"
@@ -29,6 +31,9 @@ var useHTTPS bool
 // engineAppID is the place for store the active app_id
 var engineAppID string
 
+// osStat is the os.Stat abstraction function variable
+var osStat = os.Stat
+
 // Config configure the system for queries via viper (config file)
 func Config() {
 	server = viper.GetString(serverString)
@@ -36,6 +41,22 @@ func Config() {
 	clientTimeout = time.Duration(viper.GetInt64(clientTimeoutString))
 	useHTTPS = viper.GetBool(useHTTPSString)
 	engineAppID = viper.GetString(engineAppIDString)
+}
+
+// getStormkitConfigFilePath check if in the folder is a stormkit config file
+// checks before the stormkit.config.yml then stormkit.config.yaml
+func getStormkitConfigFilePath(repoPath string) (string, error) {
+	path := repoPath + "/stormkit.config.yml"
+
+	info, err := osStat(path)
+	if err != nil {
+		return "", err
+	}
+	if info.IsDir() {
+		return "", fmt.Errorf("%s is a directory not a file", path)
+	}
+
+	return path, nil
 }
 
 // GetEngineAppID return the value of engineAppID
