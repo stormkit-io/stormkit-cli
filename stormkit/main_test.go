@@ -1,6 +1,7 @@
 package stormkit
 
 import (
+	"errors"
 	"os"
 	"testing"
 	"time"
@@ -125,5 +126,54 @@ func TestGetStormkitConfigFile(t *testing.T) {
 	p, err := getStormkitConfigFilePath(path)
 
 	assert.Equal(t, expectedPath, p)
+	assert.Nil(t, err)
+}
+
+func TestReadStormkitConfigFailIO(t *testing.T) {
+	expectedError := errors.New("error")
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return nil, expectedError
+	}
+
+	configFile, err := readStormkitConfig("")
+
+	assert.Nil(t, configFile)
+	assert.Equal(t, expectedError, err)
+}
+
+func TestReadStormkitConfigUnmarshal(t *testing.T) {
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:
+  id: 10`), nil
+	}
+
+	configFile, err := readStormkitConfig("")
+
+	assert.Nil(t, configFile)
+	expectedErr := "yaml: unmarshal errors:\n  line 3: cannot unmarshal !!map into []struct { ID string \"yaml:\\\"id\\\"\" }"
+	assert.Equal(t, expectedErr, err.Error())
+}
+
+func TestReadStormkitConfig(t *testing.T) {
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:
+  - id: 10`), nil
+	}
+
+	configFile, err := readStormkitConfig("")
+
+	expectedConfigFile := ConfigFile{
+		App: []struct {
+			ID string `yaml:"id"`
+		}{
+			{
+				ID: "10",
+			},
+		},
+	}
+
+	assert.Equal(t, &expectedConfigFile, configFile)
 	assert.Nil(t, err)
 }

@@ -2,10 +2,12 @@ package stormkit
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"time"
 
 	"github.com/spf13/viper"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -15,6 +17,13 @@ const (
 	useHTTPSString      = "app.https"          // is the flag for use https
 	engineAppIDString   = "app.engine.app_id"  // is the place for store the app_id
 )
+
+// ConfigFile is the rappresentation of the stormkit config file `stormkit.config.yml`
+type ConfigFile struct {
+	App []struct {
+		ID string `yaml:"id"`
+	}
+}
 
 // server is the address to the server
 var server string
@@ -33,6 +42,9 @@ var engineAppID string
 
 // osStat is the os.Stat abstraction function variable
 var osStat = os.Stat
+
+// ioutilReadFile is the ioutil.ReadFile abstraction function variable
+var ioutilReadFile = ioutil.ReadFile
 
 // Config configure the system for queries via viper (config file)
 func Config() {
@@ -57,6 +69,25 @@ func getStormkitConfigFilePath(repoPath string) (string, error) {
 	}
 
 	return path, nil
+}
+
+// readStormkitConfig read the stormkit config file and places it in a
+// ConfigFile struct
+func readStormkitConfig(path string) (*ConfigFile, error) {
+	// read config file via ioutil.ReadFile abstraction
+	ymlFile, err := ioutilReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	// map config file to struct
+	var c *ConfigFile
+	err = yaml.Unmarshal(ymlFile, &c)
+	if err != nil {
+		return nil, err
+	}
+
+	return c, err
 }
 
 // GetEngineAppID return the value of engineAppID
