@@ -177,3 +177,95 @@ app:
 	assert.Equal(t, &expectedConfigFile, configFile)
 	assert.Nil(t, err)
 }
+
+func TestLoadStormkitConfigNoFile(t *testing.T) {
+	expectedError := errors.New("error")
+	osStat = func(p string) (os.FileInfo, error) {
+		return nil, expectedError
+	}
+
+	err := loadStormkitConfig("")
+
+	assert.Equal(t, expectedError, err)
+}
+
+// Fare test worng yml
+func TestLoadStormkitConfigWrongYml(t *testing.T) {
+	fi := localFileInfo{}
+	osStat = func(p string) (os.FileInfo, error) {
+		return &fi, nil
+	}
+	fi.IsDirVar = false
+
+	expectedError := errors.New("error")
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return nil, expectedError
+	}
+
+	err := loadStormkitConfig("")
+
+	assert.Equal(t, expectedError, err)
+}
+
+func TestLoadStormkitConfigNoApp(t *testing.T) {
+	expectedAppID := "aaaa"
+	globalConfig.AppID = expectedAppID
+	fi := localFileInfo{}
+	osStat = func(p string) (os.FileInfo, error) {
+		return &fi, nil
+	}
+	fi.IsDirVar = false
+
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:`), nil
+	}
+
+	err := loadStormkitConfig("")
+
+	assert.Nil(t, err)
+	assert.Equal(t, expectedAppID, globalConfig.AppID)
+}
+
+func TestLoadStormkitConfigTwoApps(t *testing.T) {
+	expectedAppID := "aaa"
+	globalConfig.AppID = "bbb"
+	fi := localFileInfo{}
+	osStat = func(p string) (os.FileInfo, error) {
+		return &fi, nil
+	}
+	fi.IsDirVar = false
+
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:
+  - id: ` + expectedAppID + `
+  - id: 10`), nil
+	}
+
+	err := loadStormkitConfig("")
+
+	assert.Equal(t, ErrManyAppInConfigFile, err)
+	assert.Equal(t, expectedAppID, globalConfig.AppID)
+}
+
+func TestLoadStormkitConfig(t *testing.T) {
+	expectedAppID := "aaa"
+	globalConfig.AppID = "bbb"
+	fi := localFileInfo{}
+	osStat = func(p string) (os.FileInfo, error) {
+		return &fi, nil
+	}
+	fi.IsDirVar = false
+
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:
+  - id: ` + expectedAppID), nil
+	}
+
+	err := loadStormkitConfig("")
+
+	assert.Nil(t, err)
+	assert.Equal(t, expectedAppID, globalConfig.AppID)
+}

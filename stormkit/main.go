@@ -44,6 +44,9 @@ var ioutilReadFile = ioutil.ReadFile
 // globalConfig is the active general configuration
 var globalConfig = GlobalConfig{}
 
+// configFile is the local folder configuration file
+var configFile *ConfigFile
+
 // ErrManyAppInConfigFile error for many apps in config file
 var ErrManyAppInConfigFile = errors.New("there are many apps in the config file (using the first)")
 
@@ -91,6 +94,26 @@ func readStormkitConfig(path string) (*ConfigFile, error) {
 	return c, err
 }
 
+func loadStormkitConfig(repoPath string) error {
+	path, err := getStormkitConfigFilePath(repoPath)
+	if err != nil {
+		return err
+	}
+
+	configFile, err = readStormkitConfig(path)
+	if err != nil {
+		return err
+	}
+	if len(configFile.App) > 0 {
+		globalConfig.AppID = configFile.App[0].ID
+	}
+	if len(configFile.App) > 1 {
+		return ErrManyAppInConfigFile
+	}
+
+	return nil
+}
+
 // GetEngineAppID return the value of engineAppID
 func GetEngineAppID() string {
 	return globalConfig.AppID
@@ -106,4 +129,9 @@ func SetEngineAppID(a string) error {
 // GetGlobalConfig return the global configuration
 func GetGlobalConfig() *GlobalConfig {
 	return &globalConfig
+}
+
+// GetConfigFile return the stormkit configuration
+func GetConfigFile() *ConfigFile {
+	return configFile
 }
