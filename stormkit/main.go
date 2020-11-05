@@ -1,6 +1,7 @@
 package stormkit
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -25,20 +26,14 @@ type ConfigFile struct {
 	}
 }
 
-// server is the address to the server
-var server string
-
-// bearerToken is used to access http
-var bearerToken string
-
-// clientTimeout is the timeout of the http client
-var clientTimeout time.Duration
-
-// useHTTPS is the flag for use https in http requests
-var useHTTPS bool
-
-// engineAppID is the place for store the active app_id
-var engineAppID string
+// GlobalConfig is the configuration of the stomkit command
+type GlobalConfig struct {
+	Server        string        // address of the stormkit api server
+	BearerToken   string        // access token to the api server
+	ClientTimeout time.Duration // duration of the http client timeout
+	UseHTTPS      bool          // enable https communication to the stormkit api server
+	AppID         string        // id of the app to use
+}
 
 // osStat is the os.Stat abstraction function variable
 var osStat = os.Stat
@@ -46,13 +41,19 @@ var osStat = os.Stat
 // ioutilReadFile is the ioutil.ReadFile abstraction function variable
 var ioutilReadFile = ioutil.ReadFile
 
+// globalConfig is the active general configuration
+var globalConfig = GlobalConfig{}
+
+// ErrManyAppInConfigFile error for many apps in config file
+var ErrManyAppInConfigFile = errors.New("there are many apps in the config file (using the first)")
+
 // Config configure the system for queries via viper (config file)
 func Config() {
-	server = viper.GetString(serverString)
-	bearerToken = viper.GetString(bearerTokenString)
-	clientTimeout = time.Duration(viper.GetInt64(clientTimeoutString))
-	useHTTPS = viper.GetBool(useHTTPSString)
-	engineAppID = viper.GetString(engineAppIDString)
+	globalConfig.Server = viper.GetString(serverString)
+	globalConfig.BearerToken = viper.GetString(bearerTokenString)
+	globalConfig.ClientTimeout = time.Duration(viper.GetInt64(clientTimeoutString))
+	globalConfig.UseHTTPS = viper.GetBool(useHTTPSString)
+	globalConfig.AppID = viper.GetString(engineAppIDString)
 }
 
 // getStormkitConfigFilePath check if in the folder is a stormkit config file
@@ -92,12 +93,17 @@ func readStormkitConfig(path string) (*ConfigFile, error) {
 
 // GetEngineAppID return the value of engineAppID
 func GetEngineAppID() string {
-	return engineAppID
+	return globalConfig.AppID
 }
 
 // SetEngineAppID set the value in engineAppID and in the stormkit file
 func SetEngineAppID(a string) error {
-	engineAppID = a
+	globalConfig.AppID = a
 	viper.Set(engineAppIDString, a)
 	return viper.WriteConfig()
+}
+
+// GetGlobalConfig return the global configuration
+func GetGlobalConfig() *GlobalConfig {
+	return &globalConfig
 }

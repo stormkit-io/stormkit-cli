@@ -16,7 +16,7 @@ var client *http.Client
 func GetClient() *http.Client {
 	if client == nil {
 		client = &http.Client{
-			Timeout: clientTimeout,
+			Timeout: globalConfig.ClientTimeout,
 		}
 	}
 
@@ -25,21 +25,21 @@ func GetClient() *http.Client {
 
 func request(m, api string, body io.Reader) (*http.Request, error) {
 	var protocol string
-	if useHTTPS {
+	if globalConfig.UseHTTPS {
 		protocol = "https"
 	} else {
 		protocol = "http"
 	}
 	protocol += "://"
 
-	url := protocol + server + api
+	url := protocol + globalConfig.Server + api
 	r, err := http.NewRequest(m, url, body)
 
 	if err != nil {
 		return nil, err
 	}
 
-	r.Header.Set(authorizationHeaderString, fmt.Sprintf("Bearer %s", bearerToken))
+	r.Header.Set(authorizationHeaderString, fmt.Sprintf("Bearer %s", globalConfig.BearerToken))
 
 	return r, nil
 }

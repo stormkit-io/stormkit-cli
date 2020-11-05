@@ -32,11 +32,11 @@ func TestConfig(t *testing.T) {
 	Config()
 
 	// check Config runned correctly
-	assert.Equal(t, expectedServer, server)
-	assert.Equal(t, expectedBearerToken, bearerToken)
-	assert.Equal(t, time.Duration(expectedClientTimeout), clientTimeout)
-	assert.Equal(t, expectedUseHTTPS, useHTTPS)
-	assert.Equal(t, expectedEngineAppID, engineAppID)
+	assert.Equal(t, expectedServer, globalConfig.Server)
+	assert.Equal(t, expectedBearerToken, globalConfig.BearerToken)
+	assert.Equal(t, time.Duration(expectedClientTimeout), globalConfig.ClientTimeout)
+	assert.Equal(t, expectedUseHTTPS, globalConfig.UseHTTPS)
+	assert.Equal(t, expectedEngineAppID, globalConfig.AppID)
 }
 
 // TestEngineAppID runs a sequence of manipulation on engineAppID
@@ -45,14 +45,14 @@ func TestEngineAppID(t *testing.T) {
 
 	Config()
 
-	assert.Equal(t, expectedEngineAppID, engineAppID)
+	assert.Equal(t, expectedEngineAppID, globalConfig.AppID)
 	assert.Equal(t, expectedEngineAppID, GetEngineAppID())
 
 	localEngineAppID := "test"
 
 	SetEngineAppID(localEngineAppID)
 
-	assert.Equal(t, localEngineAppID, engineAppID)
+	assert.Equal(t, localEngineAppID, globalConfig.AppID)
 	assert.Equal(t, localEngineAppID, GetEngineAppID())
 	assert.Equal(t, localEngineAppID, viper.Get(engineAppIDString))
 }
