@@ -1,8 +1,12 @@
 package stormkit
 
 import (
+	"bytes"
 	"errors"
+	"io"
+	"log"
 	"os"
+	"sync"
 	"testing"
 	"time"
 
@@ -29,7 +33,7 @@ func TestConfig(t *testing.T) {
 	viperInit()
 
 	// run Config
-	Config()
+	Config("")
 
 	// check Config runned correctly
 	assert.Equal(t, expectedServer, globalConfig.Server)
@@ -43,7 +47,7 @@ func TestConfig(t *testing.T) {
 func TestEngineAppID(t *testing.T) {
 	viperInit()
 
-	Config()
+	Config("")
 
 	assert.Equal(t, expectedEngineAppID, globalConfig.AppID)
 	assert.Equal(t, expectedEngineAppID, GetEngineAppID())
@@ -55,6 +59,58 @@ func TestEngineAppID(t *testing.T) {
 	assert.Equal(t, localEngineAppID, globalConfig.AppID)
 	assert.Equal(t, localEngineAppID, GetEngineAppID())
 	assert.Equal(t, localEngineAppID, viper.Get(engineAppIDString))
+}
+
+func TestEngineAppIDConfigFile(t *testing.T) {
+	viperInit()
+	expectedAppID := "aaaa"
+	fi := localFileInfo{}
+	osStat = func(p string) (os.FileInfo, error) {
+		return &fi, nil
+	}
+	fi.IsDirVar = false
+
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:
+  - id: ` + expectedAppID), nil
+	}
+
+	re := captureOutput(func() {
+		Config(".")
+	})
+
+	assert.Equal(t, "", re)
+}
+
+func captureOutput(f func()) string {
+	reader, writer, err := os.Pipe()
+	if err != nil {
+		panic(err)
+	}
+	stdout := os.Stdout
+	stderr := os.Stderr
+	defer func() {
+		os.Stdout = stdout
+		os.Stderr = stderr
+		log.SetOutput(os.Stderr)
+	}()
+	os.Stdout = writer
+	os.Stderr = writer
+	log.SetOutput(writer)
+	out := make(chan string)
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go func() {
+		var buf bytes.Buffer
+		wg.Done()
+		io.Copy(&buf, reader)
+		out <- buf.String()
+	}()
+	wg.Wait()
+	f()
+	writer.Close()
+	return <-out
 }
 
 func TestGetStormkitConfigFilePathNotExits(t *testing.T) {
