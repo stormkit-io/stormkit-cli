@@ -83,6 +83,29 @@ app:
 	assert.Equal(t, "", re)
 }
 
+func TestEngineAppIDConfigFileTwoApps(t *testing.T) {
+	viperInit()
+	expectedAppID := "aaaa"
+	fi := localFileInfo{}
+	osStat = func(p string) (os.FileInfo, error) {
+		return &fi, nil
+	}
+	fi.IsDirVar = false
+
+	ioutilReadFile = func(p string) ([]byte, error) {
+		return []byte(`
+app:
+  - id: ` + expectedAppID + `
+  - id: "ccccc"`), nil
+	}
+
+	re := captureOutput(func() {
+		Config(".")
+	})
+
+	assert.Equal(t, "there are many apps in the config file (using the first)\n", re)
+}
+
 func captureOutput(f func()) string {
 	reader, writer, err := os.Pipe()
 	if err != nil {
