@@ -33,7 +33,7 @@ func TestConfig(t *testing.T) {
 	viperInit()
 
 	// run Config
-	ConfigWithPath("")
+	Config()
 
 	// check Config runned correctly
 	assert.Equal(t, expectedServer, globalConfig.Server)
@@ -47,7 +47,7 @@ func TestConfig(t *testing.T) {
 func TestEngineAppID(t *testing.T) {
 	viperInit()
 
-	ConfigWithPath("")
+	Config()
 
 	assert.Equal(t, expectedEngineAppID, globalConfig.AppID)
 	assert.Equal(t, expectedEngineAppID, GetEngineAppID())

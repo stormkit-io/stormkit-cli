@@ -26,7 +26,7 @@ func runAppUseInit() (*httptest.Server, *cobra.Command) {
 	s := testutils.ServerMock("/apps", j, http.StatusOK)
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
-	stormkit.Config("")
+	stormkit.Config()
 
 	cmd := cobra.Command{}
 
@@ -34,7 +34,7 @@ func runAppUseInit() (*httptest.Server, *cobra.Command) {
 }
 
 func TestRunAppUseNotServer(t *testing.T) {
-	stormkit.Config("")
+	stormkit.Config()
 
 	cmd := cobra.Command{}
 	args := []string{}

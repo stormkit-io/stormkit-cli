@@ -27,7 +27,7 @@ var ExpectedApps = Apps{
 
 // TestGetApps no app.server parameter
 func TestGetAppsNoServer(t *testing.T) {
-	stormkit.Config("")
+	stormkit.Config()
 	apps, err := GetApps()
 
 	assert.Nil(t, apps)
@@ -43,7 +43,7 @@ func TestGetApps(t *testing.T) {
 
 	// set parameters and call API
 	viper.Set("app.server", s.URL[7:len(s.URL)])
-	stormkit.Config("")
+	stormkit.Config()
 	apps, err := GetApps()
 
 	// test responses
@@ -56,7 +56,7 @@ func TestGetApps403(t *testing.T) {
 	defer s.Close()
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
-	stormkit.Config("")
+	stormkit.Config()
 	apps, err := GetApps()
 
 	assert.Nil(t, apps)

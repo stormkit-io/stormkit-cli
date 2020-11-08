@@ -11,7 +11,7 @@ import (
 func TestGetClient(t *testing.T) {
 	viperInit()
 
-	Config("")
+	Config()
 
 	c := GetClient()
 
@@ -20,7 +20,7 @@ func TestGetClient(t *testing.T) {
 
 func TestRequest(t *testing.T) {
 	viperInit()
-	Config("")
+	Config()
 
 	r, err := request("GET", "/api", nil)
 	auth := r.Header.Get(authorizationHeaderString)
@@ -31,7 +31,7 @@ func TestRequest(t *testing.T) {
 
 func TestRequestGet(t *testing.T) {
 	viperInit()
-	Config("")
+	Config()
 
 	r, err := Get("a")
 
@@ -41,7 +41,7 @@ func TestRequestGet(t *testing.T) {
 
 func TestRequestPost(t *testing.T) {
 	viperInit()
-	Config("")
+	Config()
 
 	r, err := Post("a", nil)
 
@@ -51,7 +51,7 @@ func TestRequestPost(t *testing.T) {
 
 func TestRequestPut(t *testing.T) {
 	viperInit()
-	Config("")
+	Config()
 
 	r, err := Put("a", nil)
 
@@ -61,7 +61,7 @@ func TestRequestPut(t *testing.T) {
 
 func TestRequestDelete(t *testing.T) {
 	viperInit()
-	Config("")
+	Config()
 
 	r, err := Delete("a", nil)
 
