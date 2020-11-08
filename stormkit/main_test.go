@@ -33,7 +33,7 @@ func TestConfig(t *testing.T) {
 	viperInit()
 
 	// run Config
-	Config("")
+	Config()
 
 	// check Config runned correctly
 	assert.Equal(t, expectedServer, globalConfig.Server)
@@ -47,7 +47,7 @@ func TestConfig(t *testing.T) {
 func TestEngineAppID(t *testing.T) {
 	viperInit()
 
-	Config("")
+	Config()
 
 	assert.Equal(t, expectedEngineAppID, globalConfig.AppID)
 	assert.Equal(t, expectedEngineAppID, GetEngineAppID())
@@ -77,7 +77,7 @@ app:
 	}
 
 	re := captureOutput(func() {
-		Config(".")
+		ConfigWithPath(".")
 	})
 
 	assert.Equal(t, "", re)
@@ -100,7 +100,8 @@ app:
 	}
 
 	re := captureOutput(func() {
-		Config(".")
+		Config()
+		ConfigWithPath("./test")
 	})
 
 	assert.Equal(t, "there are many apps in the config file (using the first)\n", re)

@@ -50,14 +50,18 @@ var configFile *ConfigFile
 // ErrMultipleAppsInConfigFile error for many apps in config file
 var ErrMultipleAppsInConfigFile = errors.New("there are many apps in the config file (using the first)")
 
-// Config configure the system for queries via viper (config file)
-func Config(repoPath string) {
+// Config configure the system via the global configuration file ~/.stormkit-cli.yml
+// via viper library
+func Config() {
 	globalConfig.Server = viper.GetString(serverString)
 	globalConfig.BearerToken = viper.GetString(bearerTokenString)
 	globalConfig.ClientTimeout = time.Duration(viper.GetInt64(clientTimeoutString))
 	globalConfig.UseHTTPS = viper.GetBool(useHTTPSString)
 	globalConfig.AppID = viper.GetString(engineAppIDString)
+}
 
+// ConfigWithPath configure the system for queries via viper (config file)
+func ConfigWithPath(repoPath string) {
 	if len(repoPath) > 0 {
 		err := loadStormkitConfig(repoPath)
 
