@@ -47,8 +47,8 @@ var globalConfig = GlobalConfig{}
 // configFile is the local folder configuration file
 var configFile *ConfigFile
 
-// ErrManyAppInConfigFile error for many apps in config file
-var ErrManyAppInConfigFile = errors.New("there are many apps in the config file (using the first)")
+// ErrMultipleAppsInConfigFile error for many apps in config file
+var ErrMultipleAppsInConfigFile = errors.New("there are many apps in the config file (using the first)")
 
 // Config configure the system for queries via viper (config file)
 func Config(repoPath string) {
@@ -61,7 +61,7 @@ func Config(repoPath string) {
 	if len(repoPath) > 0 {
 		err := loadStormkitConfig(repoPath)
 
-		if err == ErrManyAppInConfigFile {
+		if err == ErrMultipleAppsInConfigFile {
 			fmt.Println(err.Error())
 		}
 	}
@@ -116,7 +116,7 @@ func loadStormkitConfig(repoPath string) error {
 		globalConfig.AppID = configFile.App[0].ID
 	}
 	if len(configFile.App) > 1 {
-		return ErrManyAppInConfigFile
+		return ErrMultipleAppsInConfigFile
 	}
 
 	return nil

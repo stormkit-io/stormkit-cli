@@ -324,7 +324,7 @@ app:
 
 	err := loadStormkitConfig("")
 
-	assert.Equal(t, ErrManyAppInConfigFile, err)
+	assert.Equal(t, ErrMultipleAppsInConfigFile, err)
 	assert.Equal(t, expectedAppID, globalConfig.AppID)
 }
 
