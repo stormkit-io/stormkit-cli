@@ -4,8 +4,8 @@ import (
 	"strings"
 )
 
-// GetGitRoot gives the root of the git repository where executed
-func GetGitRoot() (string, error) {
+// GitRoot gives the root of the git repository where executed
+func GitRoot() (string, error) {
 	pathBytes, err := execCommand("git", "rev-parse", "--show-toplevel").Output()
 	path := strings.TrimSpace(string(pathBytes))
 

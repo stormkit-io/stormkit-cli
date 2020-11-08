@@ -81,7 +81,7 @@ func initConfig() {
 		//		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
 
-	if repoPath, err := utils.GetGitRoot(); err == nil {
+	if repoPath, err := utils.GitRoot(); err == nil {
 		stormkit.Config(repoPath)
 	} else {
 		stormkit.Config("")
