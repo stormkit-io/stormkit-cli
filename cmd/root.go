@@ -8,6 +8,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/viper"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
+	"github.com/stormkit-io/stormkit-cli/utils"
 )
 
 var cfgFile string
@@ -79,5 +80,9 @@ func initConfig() {
 	if err := viper.ReadInConfig(); err == nil {
 		//		fmt.Println("Using config file:", viper.ConfigFileUsed())
 	}
+
 	stormkit.Config()
+	if repoPath, err := utils.GitRoot(); err == nil {
+		stormkit.ConfigWithPath(repoPath)
+	}
 }
