@@ -40,7 +40,7 @@ func TestRunAppUseNotServer(t *testing.T) {
 	args := []string{}
 	err := runAppUse(&cmd, args)
 
-	assert.Equal(t, "Get http:///apps: http: no Host in request URL", err.Error())
+	assert.Equal(t, `Get "http:///apps": http: no Host in request URL`, err.Error())
 }
 
 func TestRunAppUseNotFound(t *testing.T) {
