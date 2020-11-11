@@ -34,13 +34,14 @@ func runAppUseInit() (*httptest.Server, *cobra.Command) {
 }
 
 func TestRunAppUseNotServer(t *testing.T) {
+	viper.Set("app.server", "aaaa")
 	stormkit.Config()
 
 	cmd := cobra.Command{}
 	args := []string{}
 	err := runAppUse(&cmd, args)
 
-	assert.Equal(t, "Get http:///apps: http: no Host in request URL", err.Error())
+	assert.Equal(t, `Get http://aaaa/apps: dial tcp: lookup aaaa: no such host`, err.Error())
 }
 
 func TestRunAppUseNotFound(t *testing.T) {
