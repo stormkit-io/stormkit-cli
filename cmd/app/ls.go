@@ -2,9 +2,7 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"strconv"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/stormkit-io/stormkit-cli/api"
@@ -20,7 +18,7 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: runAppLs,
+	RunE: runAppLs,
 }
 
 func init() {
@@ -29,21 +27,15 @@ func init() {
 	lsCmd.Flags().BoolP("details", "d", false, "Show details of the apps")
 }
 
-func runAppLs(cmd *cobra.Command, args []string) {
+func runAppLs(cmd *cobra.Command, args []string) error {
 	apps, err := api.GetApps()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	details, err := cmd.Flags().GetBool("details")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	idMaxLength := 0
@@ -62,18 +54,11 @@ func runAppLs(cmd *cobra.Command, args []string) {
 
 	for _, a := range apps.Apps {
 		if details {
-			fmt.Printf("Repo: %s\n", a.Repo)
-			fmt.Printf("  ID: %s\n", a.ID)
-			fmt.Printf("  Status: %t\n", a.Status)
-			fmt.Printf("  AutoDeploy: %s\n", a.AutoDeploy)
-			fmt.Printf("  DefaultEnv: %s\n", a.DefaultEnv)
-			fmt.Printf("  Endpoint: %s\n", a.Endpoint)
-			fmt.Printf("  DisplayName: %s\n", a.DisplayName)
-			fmt.Printf("  CreatedAt: %s\n", time.Unix(int64(a.CreatedAt), 0))
-			fmt.Printf("  DeployedAt: %s\n", time.Unix(int64(a.DeployedAt), 0))
-			fmt.Println()
+			fmt.Print(api.DumpApp(a))
 		} else {
 			fmt.Printf(printf, a.ID, a.Repo)
 		}
 	}
+
+	return nil
 }
