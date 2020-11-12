@@ -52,6 +52,7 @@ func runAppUseInit() (*httptest.Server, *cobra.Command) {
 }
 
 func TestRunAppUseNotServer(t *testing.T) {
+	viper.Set("app.server", "")
 	stormkit.Config()
 
 	cmd := cobra.Command{}

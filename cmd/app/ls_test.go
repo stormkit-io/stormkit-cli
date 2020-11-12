@@ -31,6 +31,7 @@ func runAppLsInit() (*httptest.Server, *cobra.Command) {
 func TestRunAppLsNotServer(t *testing.T) {
 	stormkit.Config()
 
+	viper.Set("app.server", "")
 	cmd := cobra.Command{}
 	args := []string{}
 
@@ -40,7 +41,8 @@ func TestRunAppLsNotServer(t *testing.T) {
 }
 
 func TestRunAppLsNoFlag(t *testing.T) {
-	_, cmd := runAppUseInit()
+	s, cmd := runAppUseInit()
+	defer s.Close()
 	args := []string{}
 
 	err := runAppLs(cmd, args)
@@ -49,7 +51,8 @@ func TestRunAppLsNoFlag(t *testing.T) {
 }
 
 func TestRunAppLs(t *testing.T) {
-	_, cmd := runAppLsInit()
+	s, cmd := runAppLsInit()
+	defer s.Close()
 	args := []string{}
 
 	f := func() {
@@ -57,7 +60,7 @@ func TestRunAppLs(t *testing.T) {
 		assert.Nil(t, err)
 	}
 
-	s := testutils.CaptureOutput(f)
+	out := testutils.CaptureOutput(f)
 
 	expectedOutput := fmt.Sprintf(
 		"ID   Repository\n%s  %s\n%s  %s\n",
@@ -66,11 +69,12 @@ func TestRunAppLs(t *testing.T) {
 		expectedApps.Apps[1].ID,
 		expectedApps.Apps[1].Repo,
 	)
-	assert.Equal(t, expectedOutput, s)
+	assert.Equal(t, expectedOutput, out)
 }
 
 func TestRunAppLsDetails(t *testing.T) {
-	_, cmd := runAppLsInit()
+	s, cmd := runAppLsInit()
+	defer s.Close()
 	args := []string{}
 	cmd.Flags().Set("details", "true")
 
@@ -79,12 +83,12 @@ func TestRunAppLsDetails(t *testing.T) {
 		assert.Nil(t, err)
 	}
 
-	s := testutils.CaptureOutput(f)
+	out := testutils.CaptureOutput(f)
 
 	a := expectedApps.Apps[0]
 	a0 := api.DumpApp(a)
 	a = expectedApps.Apps[1]
 	a1 := api.DumpApp(a)
 
-	assert.Equal(t, a0+a1, s)
+	assert.Equal(t, a0+a1, out)
 }
