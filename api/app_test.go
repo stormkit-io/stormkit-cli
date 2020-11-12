@@ -2,8 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/spf13/viper"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
@@ -61,4 +63,13 @@ func TestGetApps403(t *testing.T) {
 
 	assert.Nil(t, apps)
 	assert.Contains(t, err.Error(), http.StatusText(http.StatusForbidden))
+}
+
+func TestDumpApp(t *testing.T) {
+	s := DumpApp(ExpectedApps.Apps[0])
+	createdAt := time.Unix(int64(ExpectedApps.Apps[0].CreatedAt), 0)
+	deployedAt := time.Unix(int64(ExpectedApps.Apps[0].DeployedAt), 0)
+	expected := fmt.Sprintf("Repo: repo1\n  ID: 1234\n  Status: false\n  AutoDeploy: \n  DefaultEnv: \n  Endpoint: \n  DisplayName: \n  CreatedAt: %s\n  DeployedAt: %s\n\n", createdAt, deployedAt)
+
+	assert.Equal(t, expected, s)
 }

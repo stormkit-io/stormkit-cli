@@ -2,9 +2,7 @@ package app
 
 import (
 	"fmt"
-	"os"
 	"strconv"
-	"time"
 
 	"github.com/spf13/cobra"
 	"github.com/stormkit-io/stormkit-cli/api"
@@ -20,54 +18,47 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: runAppLs,
+	RunE: runAppLs,
 }
 
 func init() {
 	appCmd.AddCommand(lsCmd)
 
 	lsCmd.Flags().BoolP("details", "d", false, "Show details of the apps")
-	lsCmd.Flags().BoolP("numbers", "n", false, "Show the index numbers of the applications")
 }
 
-func runAppLs(cmd *cobra.Command, args []string) {
+func runAppLs(cmd *cobra.Command, args []string) error {
 	apps, err := api.GetApps()
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
 	details, err := cmd.Flags().GetBool("details")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	numbers, err := cmd.Flags().GetBool("numbers")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return err
 	}
 
-	lenf := strconv.Itoa(len(apps.Apps) - 1)
-	printf := "%" + lenf + "v %s\n"
-	tabf := fmt.Sprintf("%"+lenf+"v    ", "")
-
-	for i, a := range apps.Apps {
-		if numbers {
-			fmt.Printf(printf, i, a.Repo)
-		} else {
-			fmt.Println(a.Repo)
+	idMaxLength := 0
+	for _, a := range apps.Apps {
+		if len(a.ID) > idMaxLength {
+			idMaxLength = len(a.ID)
 		}
+	}
+	lenf := strconv.Itoa(idMaxLength)
+	printf := "%" + lenf + "v  %s\n"
+	tabf := fmt.Sprintf("%"+lenf+"v", "")
 
+	if !details {
+		fmt.Printf("ID%sRepository\n", tabf)
+	}
+
+	for _, a := range apps.Apps {
 		if details {
-			fmt.Printf("%sStatus: %t\n", tabf, a.Status)
-			fmt.Printf("%sAutoDeploy: %s\n", tabf, a.AutoDeploy)
-			fmt.Printf("%sDefaultEnv: %s\n", tabf, a.DefaultEnv)
-			fmt.Printf("%sEndpoint: %s\n", tabf, a.Endpoint)
-			fmt.Printf("%sDisplayName: %s\n", tabf, a.DisplayName)
-			fmt.Printf("%sCreatedAt: %s\n", tabf, time.Unix(int64(a.CreatedAt), 0))
-			fmt.Printf("%sDeployedAt: %s\n", tabf, time.Unix(int64(a.DeployedAt), 0))
-			fmt.Println()
+			fmt.Print(api.DumpApp(a))
+		} else {
+			fmt.Printf(printf, a.ID, a.Repo)
 		}
 	}
+
+	return nil
 }
