@@ -62,3 +62,8 @@ func TestGetApps403(t *testing.T) {
 	assert.Nil(t, apps)
 	assert.Contains(t, err.Error(), http.StatusText(http.StatusForbidden))
 }
+
+func TestDumpApp(t *testing.T) {
+	s := DumpApp(ExpectedApps.Apps[0])
+	assert.Equal(t, "Repo: repo1\n  ID: 1234\n  Status: false\n  AutoDeploy: \n  DefaultEnv: \n  Endpoint: \n  DisplayName: \n  CreatedAt: 1970-01-01 01:00:00 +0100 CET\n  DeployedAt: 1970-01-01 01:00:00 +0100 CET\n\n", s)
+}

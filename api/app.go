@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 )
 
+const dumpAppPrintf = "Repo: %s\n  ID: %s\n  Status: %t\n  AutoDeploy: %s\n  DefaultEnv: %s\n  Endpoint: %s\n  DisplayName: %s\n  CreatedAt: %s\n  DeployedAt: %s\n\n"
 const getApps = "/apps"
 
 // App is the model of an app
@@ -70,4 +72,20 @@ func GetApps() (*Apps, error) {
 	err = json.Unmarshal(body, &a)
 
 	return &a, err
+}
+
+// DumpApp in a string with all the parameters of the app
+func DumpApp(a App) string {
+	return fmt.Sprintf(
+		dumpAppPrintf,
+		a.Repo,
+		a.ID,
+		a.Status,
+		a.AutoDeploy,
+		a.DefaultEnv,
+		a.Endpoint,
+		a.DisplayName,
+		time.Unix(int64(a.CreatedAt), 0),
+		time.Unix(int64(a.DeployedAt), 0),
+	)
 }
