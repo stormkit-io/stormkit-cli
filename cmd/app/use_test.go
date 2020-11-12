@@ -16,8 +16,26 @@ import (
 
 var expectedApps = api.Apps{
 	Apps: []api.App{
-		{ID: "123", Repo: "repo0"},
-		{ID: "124", Repo: "repo1"},
+		{
+			ID:          "123",
+			Repo:        "github/user0/repo0",
+			Status:      true,
+			AutoDeploy:  "commit",
+			DefaultEnv:  "production",
+			DisplayName: "test",
+			CreatedAt:   1019284842,
+			DeployedAt:  19340538292,
+		},
+		{
+			ID:          "124",
+			Repo:        "github/user0/repo1",
+			Status:      false,
+			AutoDeploy:  "pr",
+			DefaultEnv:  "production",
+			DisplayName: "test2",
+			CreatedAt:   1920038421,
+			DeployedAt:  2910198384,
+		},
 	},
 }
 
