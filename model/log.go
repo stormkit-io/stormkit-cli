@@ -1,4 +1,4 @@
-package api
+package model
 
 import (
 	"fmt"
@@ -19,8 +19,22 @@ type Log struct {
 	}
 }
 
-// DumpLog format the data of the Log struct in a string
-func DumpLog(l Log) string {
+// MockLogs array of istances of Log struct
+var MockLogs = []Log{
+	{
+		Title:   "title log 0",
+		Message: "message log 0 that is true",
+		Status:  true,
+	},
+	{
+		Title:   "title log 1",
+		Message: "message log 1 that is false",
+		Status:  false,
+	},
+}
+
+// Dump format the data of the Log struct in a string
+func (l *Log) Dump() string {
 	if l.Status {
 		return fmt.Sprintf("%s    OK\n\n%s", l.Title, l.Message)
 	}

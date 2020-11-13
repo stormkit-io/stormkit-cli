@@ -6,34 +6,18 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 )
 
+// deployByIDapi is the api string formatter for Sprintf(), first argument
+// app id, second argument deploy id
 const deployByIDapi = "/app/%s/deploy/%s"
 
-// Deploy of application
-type Deploy struct {
-	ID                string `json:"id"`
-	AppID             string `json:"appId"`
-	Branch            string `json:"branch"`
-	NumberOfFiles     string `json:"numberOfFiles"`
-	Version           string `json:"version"`
-	Exit              int    `json:"exit"`
-	Percentage        int    `json:"percentage"`
-	PullRequestNumber int    `json:"pullRequestNumber"`
-	IsAutoDeploy      bool   `json:"isAutoDeploy"`
-	CreatedAt         int64  `json:"createdAt"`
-	StoppedAt         int64  `json:"stoppedAt"`
-	IsRunning         bool   `json:"isRunning"`
-	Preview           string `json:"preview"`
-	Logs              []Log  `json:"logs"`
-}
-
-type SingleDeploy struct {
-	Deploy Deploy `json:"deploy"`
-}
-
-func DeployByID(appID, id string) (*SingleDeploy, error) {
+// DeployByID calls the stormkit http api with the appID and the log id,
+// it returns a SingleDeploy struct that is the rappresentation of the
+// http response
+func DeployByID(appID, id string) (*model.SingleDeploy, error) {
 	// build api string
 	s := fmt.Sprintf(deployByIDapi, appID, id)
 	// get stormkit http client and build request
@@ -59,7 +43,7 @@ func DeployByID(appID, id string) (*SingleDeploy, error) {
 	// convert response in SingleDeploy struct
 	body, err := ioutil.ReadAll(response.Body)
 
-	var d SingleDeploy
+	var d model.SingleDeploy
 	err = json.Unmarshal(body, &d)
 
 	return &d, err

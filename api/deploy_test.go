@@ -7,29 +7,11 @@ import (
 	"testing"
 
 	"github.com/spf13/viper"
+	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 	"github.com/stormkit-io/stormkit-cli/testutils"
 	"github.com/stretchr/testify/assert"
 )
-
-var expectedSingleDeploy = SingleDeploy{
-	Deploy: Deploy{
-		ID:    "12345",
-		AppID: "12346",
-		Logs: []Log{
-			{
-				Title:   "title log 0",
-				Message: "message log 0 that is true",
-				Status:  true,
-			},
-			{
-				Title:   "title log 1",
-				Message: "message log 1 that is false",
-				Status:  false,
-			},
-		},
-	},
-}
 
 func TestDeployByIDNoServer(t *testing.T) {
 	viper.Set("app.server", "")
@@ -42,10 +24,10 @@ func TestDeployByIDNoServer(t *testing.T) {
 }
 
 func TestDeployByID(t *testing.T) {
-	appID := expectedSingleDeploy.Deploy.AppID
-	id := expectedSingleDeploy.Deploy.ID
+	appID := model.MockSingleDeploy.Deploy.AppID
+	id := model.MockSingleDeploy.Deploy.ID
 	// build mock server
-	j, _ := json.Marshal(expectedSingleDeploy)
+	j, _ := json.Marshal(model.MockSingleDeploy)
 	s := testutils.ServerMock(fmt.Sprintf(deployByIDapi, appID, id), j, http.StatusOK)
 	defer s.Close()
 
@@ -54,18 +36,18 @@ func TestDeployByID(t *testing.T) {
 	stormkit.Config()
 
 	deploy, err := DeployByID(
-		expectedSingleDeploy.Deploy.AppID,
-		expectedSingleDeploy.Deploy.ID,
+		model.MockSingleDeploy.Deploy.AppID,
+		model.MockSingleDeploy.Deploy.ID,
 	)
 
 	// test response
 	assert.Nil(t, err)
-	assert.Equal(t, &expectedSingleDeploy, deploy)
+	assert.Equal(t, &model.MockSingleDeploy, deploy)
 }
 
 func TestDeployByID403(t *testing.T) {
-	appID := expectedSingleDeploy.Deploy.AppID
-	id := expectedSingleDeploy.Deploy.ID
+	appID := model.MockSingleDeploy.Deploy.AppID
+	id := model.MockSingleDeploy.Deploy.ID
 
 	// build mock server
 	s := testutils.ServerMock(fmt.Sprintf(deployByIDapi, appID, id), nil, http.StatusForbidden)
@@ -75,8 +57,8 @@ func TestDeployByID403(t *testing.T) {
 	stormkit.Config()
 
 	deploy, err := DeployByID(
-		expectedSingleDeploy.Deploy.AppID,
-		expectedSingleDeploy.Deploy.ID,
+		model.MockSingleDeploy.Deploy.AppID,
+		model.MockSingleDeploy.Deploy.ID,
 	)
 
 	assert.Nil(t, deploy)
