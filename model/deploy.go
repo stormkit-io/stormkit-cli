@@ -5,7 +5,7 @@ type Deploy struct {
 	ID                string `json:"id"`
 	AppID             string `json:"appId"`
 	Branch            string `json:"branch"`
-	NumberOfFiles     string `json:"numberOfFiles"`
+	NumberOfFiles     int    `json:"numberOfFiles"`
 	Version           string `json:"version"`
 	Exit              int    `json:"exit"`
 	Percentage        int    `json:"percentage"`
