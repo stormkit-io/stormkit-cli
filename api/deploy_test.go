@@ -28,7 +28,7 @@ func TestDeployByID(t *testing.T) {
 	id := model.MockSingleDeploy.Deploy.ID
 	// build mock server
 	j, _ := json.Marshal(model.MockSingleDeploy)
-	s := testutils.ServerMock(fmt.Sprintf(deployByIDapi, appID, id), j, http.StatusOK)
+	s := testutils.ServerMock(fmt.Sprintf(DeployByIDapi, appID, id), j, http.StatusOK)
 	defer s.Close()
 
 	// set parameter and call API
@@ -50,7 +50,7 @@ func TestDeployByID403(t *testing.T) {
 	id := model.MockSingleDeploy.Deploy.ID
 
 	// build mock server
-	s := testutils.ServerMock(fmt.Sprintf(deployByIDapi, appID, id), nil, http.StatusForbidden)
+	s := testutils.ServerMock(fmt.Sprintf(DeployByIDapi, appID, id), nil, http.StatusForbidden)
 	defer s.Close()
 
 	viper.Set("app.server", s.URL[7:])

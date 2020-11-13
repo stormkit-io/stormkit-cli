@@ -10,16 +10,16 @@ import (
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 )
 
-// deployByIDapi is the api string formatter for Sprintf(), first argument
+// DeployByIDapi is the api string formatter for Sprintf(), first argument
 // app id, second argument deploy id
-const deployByIDapi = "/app/%s/deploy/%s"
+const DeployByIDapi = "/app/%s/deploy/%s"
 
 // DeployByID calls the stormkit http api with the appID and the log id,
 // it returns a SingleDeploy struct that is the rappresentation of the
 // http response
 func DeployByID(appID, id string) (*model.SingleDeploy, error) {
 	// build api string
-	s := fmt.Sprintf(deployByIDapi, appID, id)
+	s := fmt.Sprintf(DeployByIDapi, appID, id)
 	// get stormkit http client and build request
 	c := stormkit.GetClient()
 	request, err := stormkit.Get(s)
