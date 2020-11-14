@@ -10,14 +10,11 @@ import (
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 )
 
-// getApps api string
-const getApps = "/apps"
-
 // GetApps queries the list of apps of the user
 func GetApps() (*model.Apps, error) {
 	// get stormkit http client and build requests
 	c := stormkit.GetClient()
-	request, err := stormkit.Get(getApps)
+	request, err := stormkit.Get(GetAppsAPI)
 	if err != nil {
 		return nil, err
 	}
