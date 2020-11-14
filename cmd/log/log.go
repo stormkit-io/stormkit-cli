@@ -12,7 +12,7 @@ import (
 // logCmd represents the log command
 var logCmd = &cobra.Command{
 	Use:   "log",
-	Short: "Log of deploy",
+	Short: "Print deployment logs",
 	Long:  `Print the logs of the deployment through his ID and the ID of the application, the id of the application from file ~/.stomkit-cli.yml or ./stormkit.config.yml`,
 	RunE:  runLog,
 }
