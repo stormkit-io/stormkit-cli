@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stormkit-io/stormkit-cli/api"
 	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 	"github.com/stormkit-io/stormkit-cli/testutils"
@@ -16,7 +17,7 @@ import (
 
 func runAppUseInit() (*httptest.Server, *cobra.Command) {
 	j, _ := json.Marshal(model.MockApps)
-	s := testutils.ServerMock("/apps", j, http.StatusOK)
+	s := testutils.ServerMock(api.GetAppsAPI, j, http.StatusOK)
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
 	stormkit.Config()

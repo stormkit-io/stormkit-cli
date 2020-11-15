@@ -25,7 +25,7 @@ func TestGetAppsNoServer(t *testing.T) {
 func TestGetApps(t *testing.T) {
 	// build mock server
 	j, _ := json.Marshal(model.MockApps)
-	s := testutils.ServerMock("/apps", j, http.StatusOK)
+	s := testutils.ServerMock(GetAppsAPI, j, http.StatusOK)
 	defer s.Close()
 
 	// set parameters and call API
@@ -39,7 +39,7 @@ func TestGetApps(t *testing.T) {
 }
 
 func TestGetApps403(t *testing.T) {
-	s := testutils.ServerMock("/apps", nil, http.StatusForbidden)
+	s := testutils.ServerMock(GetAppsAPI, nil, http.StatusForbidden)
 	defer s.Close()
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
