@@ -54,7 +54,7 @@ func runAppLs(cmd *cobra.Command, args []string) error {
 
 	for _, a := range apps.Apps {
 		if details {
-			fmt.Print(api.DumpApp(a))
+			fmt.Print(a.Dump())
 		} else {
 			fmt.Printf(printf, a.ID, a.Repo)
 		}

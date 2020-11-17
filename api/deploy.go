@@ -10,16 +10,20 @@ import (
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 )
 
-// GetApps queries the list of apps of the user
-func GetApps() (*model.Apps, error) {
-	// get stormkit http client and build requests
+// DeployByID calls the stormkit http api with the appID and the log id,
+// it returns a SingleDeploy struct that is the rappresentation of the
+// http response
+func DeployByID(appID, id string) (*model.SingleDeploy, error) {
+	// build api string
+	s := fmt.Sprintf(DeployByIDapi, appID, id)
+	// get stormkit http client and build request
 	c := stormkit.GetClient()
-	request, err := stormkit.Get(GetAppsAPI)
+	request, err := stormkit.Get(s)
 	if err != nil {
 		return nil, err
 	}
 
-	// run requests
+	// run request
 	response, err := c.Do(request)
 	if err != nil {
 		return nil, err
@@ -32,11 +36,11 @@ func GetApps() (*model.Apps, error) {
 
 	defer response.Body.Close()
 
-	// convert response in Apps object
+	// convert response in SingleDeploy struct
 	body, err := ioutil.ReadAll(response.Body)
 
-	var a model.Apps
-	err = json.Unmarshal(body, &a)
+	var d model.SingleDeploy
+	err = json.Unmarshal(body, &d)
 
-	return &a, err
+	return &d, err
 }

@@ -10,14 +10,15 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stormkit-io/stormkit-cli/api"
+	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 	"github.com/stormkit-io/stormkit-cli/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
 func runAppLsInit() (*httptest.Server, *cobra.Command) {
-	j, _ := json.Marshal(expectedApps)
-	s := testutils.ServerMock("/apps", j, http.StatusOK)
+	j, _ := json.Marshal(model.MockApps)
+	s := testutils.ServerMock(api.GetAppsAPI, j, http.StatusOK)
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
 	stormkit.Config()
@@ -63,11 +64,11 @@ func TestRunAppLs(t *testing.T) {
 	out := testutils.CaptureOutput(f)
 
 	expectedOutput := fmt.Sprintf(
-		"ID   Repository\n%s  %s\n%s  %s\n",
-		expectedApps.Apps[0].ID,
-		expectedApps.Apps[0].Repo,
-		expectedApps.Apps[1].ID,
-		expectedApps.Apps[1].Repo,
+		"ID    Repository\n%s  %s\n%s  %s\n",
+		model.MockApps.Apps[0].ID,
+		model.MockApps.Apps[0].Repo,
+		model.MockApps.Apps[1].ID,
+		model.MockApps.Apps[1].Repo,
 	)
 	assert.Equal(t, expectedOutput, out)
 }
@@ -85,10 +86,8 @@ func TestRunAppLsDetails(t *testing.T) {
 
 	out := testutils.CaptureOutput(f)
 
-	a := expectedApps.Apps[0]
-	a0 := api.DumpApp(a)
-	a = expectedApps.Apps[1]
-	a1 := api.DumpApp(a)
+	a0 := model.MockApps.Apps[0].Dump()
+	a1 := model.MockApps.Apps[1].Dump()
 
 	assert.Equal(t, a0+a1, out)
 }
