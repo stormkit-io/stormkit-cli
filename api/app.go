@@ -14,7 +14,7 @@ import (
 func GetApps() (*model.Apps, error) {
 	// get stormkit http client and build requests
 	c := stormkit.GetClient()
-	request, err := stormkit.Get(GetAppsAPI)
+	request, err := stormkit.Get(API.Apps)
 	if err != nil {
 		return nil, err
 	}

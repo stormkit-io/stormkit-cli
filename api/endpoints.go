@@ -1,8 +1,15 @@
 package api
 
-// GetAppsAPI api string
-const GetAppsAPI = "/apps"
+// APIEndpoints rappresent the API endpoints paths
+type APIEndpoints struct {
+	Apps       string
+	DeployByID string
+	Deploy     string
+}
 
-// DeployByIDapi is the api string formatter for Sprintf(), first argument
-// app id, second argument deploy id
-const DeployByIDapi = "/app/%s/deploy/%s"
+// API has all the endpoints path
+var API = &APIEndpoints{
+	Apps:       "/apps",
+	DeployByID: "/app/%s/deploy/%s",
+	Deploy:     "/app/deploy",
+}
