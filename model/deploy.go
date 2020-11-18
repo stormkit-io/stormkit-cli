@@ -8,6 +8,7 @@ type Deploy struct {
 	NumberOfFiles     int    `json:"numberOfFiles"`
 	Version           string `json:"version"`
 	Exit              int    `json:"exit"`
+	Env               string `json:"env"`
 	Percentage        int    `json:"percentage"`
 	PullRequestNumber int    `json:"pullRequestNumber"`
 	IsAutoDeploy      bool   `json:"isAutoDeploy"`
