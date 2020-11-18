@@ -37,7 +37,7 @@ var MockEnvsArray = EnvsArray{
 		MockEnv,
 		Env{
 			ID:          "1236",
-			AppID:       "1237",
+			AppID:       "1235",
 			Env:         "env2",
 			Branch:      "branch2",
 			AutoPublish: false,
