@@ -18,7 +18,7 @@ import (
 
 func runAppLsInit() (*httptest.Server, *cobra.Command) {
 	j, _ := json.Marshal(model.MockApps)
-	s := testutils.ServerMock(api.GetAppsAPI, j, http.StatusOK)
+	s := testutils.ServerMock(api.API.Apps, j, http.StatusOK)
 
 	viper.Set("app.server", s.URL[7:len(s.URL)])
 	stormkit.Config()

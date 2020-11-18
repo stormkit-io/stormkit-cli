@@ -16,7 +16,7 @@ import (
 // http response
 func DeployByID(appID, id string) (*model.SingleDeploy, error) {
 	// build api string
-	s := fmt.Sprintf(DeployByIDapi, appID, id)
+	s := fmt.Sprintf(API.DeployByID, appID, id)
 	// get stormkit http client and build request
 	c := stormkit.GetClient()
 	request, err := stormkit.Get(s)
@@ -57,7 +57,7 @@ func Deploy(d model.Deploy) (*model.Deploy, error) {
 
 	// get stormkit http client add build request
 	c := stormkit.GetClient()
-	request, err := stormkit.Post(DeployAPI, bytes.NewReader(b))
+	request, err := stormkit.Post(API.Deploy, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
 	}

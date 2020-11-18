@@ -17,7 +17,7 @@ import (
 
 func runDeployInit() (*httptest.Server, *cobra.Command) {
 	j, _ := json.Marshal(model.MockDeploy)
-	s := testutils.ServerMock(api.DeployAPI, j, http.StatusOK)
+	s := testutils.ServerMock(api.API.Deploy, j, http.StatusOK)
 
 	viper.Set("app.server", s.URL[7:])
 	viper.Set("app.engine.app_id", model.MockDeploy.AppID)
