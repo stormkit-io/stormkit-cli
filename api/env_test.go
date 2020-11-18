@@ -28,7 +28,7 @@ func TestEnvs(t *testing.T) {
 	appID := model.MockEnv.AppID
 	// build mock server
 	j, _ := json.Marshal(model.MockEnvsArray)
-	s := testutils.ServerMock(fmt.Sprintf(EnvsAPI, appID), j, http.StatusOK)
+	s := testutils.ServerMock(fmt.Sprintf(API.Envs, appID), j, http.StatusOK)
 	defer s.Close()
 
 	// init stormkit
@@ -45,7 +45,7 @@ func TestEnvs403(t *testing.T) {
 	// init params
 	appID := model.MockEnv.AppID
 	// build mock server
-	s := testutils.ServerMock(fmt.Sprintf(EnvsAPI, appID), nil, http.StatusForbidden)
+	s := testutils.ServerMock(fmt.Sprintf(API.Envs, appID), nil, http.StatusForbidden)
 	defer s.Close()
 
 	// init stormkit

@@ -14,7 +14,7 @@ import (
 func Envs(appID string) (*model.EnvsArray, error) {
 	// get stormkit http client and build request
 	c := stormkit.GetClient()
-	api := fmt.Sprintf(EnvsAPI, appID)
+	api := fmt.Sprintf(API.Envs, appID)
 	request, err := stormkit.Get(api)
 	if err != nil {
 		return nil, err
