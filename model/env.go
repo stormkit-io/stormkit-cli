@@ -5,7 +5,7 @@ type Env struct {
 	ID     string `json:"id"`
 	AppID  string `json:"appId"`
 	Env    string `json:"env"`
-	Branch string `json:"master"`
+	Branch string `json:"branch"`
 	Build  struct {
 		Entry string `json:"entry"`
 		Cmd   string `json:"cmd"`

@@ -45,7 +45,6 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 		}
 
 		a, _, err := prompt.Run()
-
 		if err != nil {
 			return err
 		}
@@ -57,6 +56,9 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 		}
 
 		deploy, err := api.Deploy(d)
+		if err != nil {
+			return err
+		}
 
 		fmt.Printf("Deploy ID: %s\n", deploy.ID)
 		return nil
