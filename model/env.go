@@ -10,9 +10,13 @@ type Env struct {
 		Entry string `json:"entry"`
 		Cmd   string `json:"cmd"`
 	}
-	AutoPublish bool   `json:"autoPublish"`
-	LastDeploy  Deploy `json:"lastDeploy"`
-	Domain      struct {
+	AutoPublish bool `json:"autoPublish"`
+	LastDeploy  struct {
+		ID        int   `json:"id"`
+		CreatedAt int64 `json:"createdAt"`
+		Exit      int   `json:"exit"`
+	}
+	Domain struct {
 		Verified bool `json:"verified"`
 	}
 }
@@ -20,6 +24,17 @@ type Env struct {
 // EnvsArray array of environments of an application
 type EnvsArray struct {
 	Envs []Env `json:"envs"`
+}
+
+// Names returns the names of the envs
+func (a *EnvsArray) Names() []string {
+	n := []string{}
+
+	for _, v := range a.Envs {
+		n = append(n, v.Env)
+	}
+
+	return n
 }
 
 // MockEnv for run tests

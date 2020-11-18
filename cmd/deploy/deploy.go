@@ -3,12 +3,16 @@ package deploy
 import (
 	"fmt"
 
+	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/stormkit-io/stormkit-cli/api"
 	"github.com/stormkit-io/stormkit-cli/cmd"
 	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
 )
+
+// interactiveFlag
+const interactiveFlag = "interactive"
 
 // deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
@@ -20,9 +24,44 @@ var deployCmd = &cobra.Command{
 
 func init() {
 	cmd.GetRootCmd().AddCommand(deployCmd)
+	deployCmd.Flags().BoolP(interactiveFlag, "i", false, "Use command as interactive")
 }
 
 func runDeploy(cmd *cobra.Command, args []string) error {
+	interactive, err := cmd.Flags().GetBool(interactiveFlag)
+	if err != nil {
+		return err
+	}
+
+	if interactive {
+		envs, err := api.Envs(stormkit.GetEngineAppID())
+		if err != nil {
+			return err
+		}
+
+		prompt := promptui.Select{
+			Label: "Select env (branch taken from env config)",
+			Items: envs.Names(),
+		}
+
+		a, _, err := prompt.Run()
+
+		if err != nil {
+			return err
+		}
+
+		d := model.Deploy{
+			AppID:  stormkit.GetEngineAppID(),
+			Env:    envs.Envs[a].Env,
+			Branch: envs.Envs[a].Branch,
+		}
+
+		deploy, err := api.Deploy(d)
+
+		fmt.Printf("Deploy ID: %s\n", deploy.ID)
+		return nil
+	}
+
 	if len(args) < 2 {
 		return fmt.Errorf("not enought arguments")
 	}
