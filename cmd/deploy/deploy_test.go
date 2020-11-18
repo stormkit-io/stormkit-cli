@@ -50,9 +50,9 @@ func TestRunDeployNoFlag(t *testing.T) {
 	viper.Set("app.server", "")
 	stormkit.Config()
 
-	cmd := cobra.Command{}
+	cmd := prepareDeployCmd()
 	args := []string{}
-	err := runDeploy(&cmd, args)
+	err := runDeploy(cmd, args)
 
 	assert.Equal(t, "flag accessed but not defined: interactive", err.Error())
 }
