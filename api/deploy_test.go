@@ -64,3 +64,52 @@ func TestDeployByID403(t *testing.T) {
 	assert.Nil(t, deploy)
 	assert.Contains(t, err.Error(), http.StatusText(http.StatusForbidden))
 }
+
+func TestDeployNoServer(t *testing.T) {
+	viper.Set("app.server", "")
+	stormkit.Config()
+
+	d, err := Deploy(model.Deploy{})
+
+	assert.Nil(t, d)
+	assert.Equal(t, `Post "http:///app/deploy": http: no Host in request URL`, err.Error())
+}
+
+func TestDeploy(t *testing.T) {
+	paramDeploy := model.Deploy{
+		AppID:  "12345",
+		Env:    "env",
+		Branch: "branch",
+	}
+
+	j, _ := json.Marshal(model.MockDeploy)
+	s := testutils.ServerMock(DeployAPI, j, http.StatusOK)
+	defer s.Close()
+
+	viper.Set("app.server", s.URL[7:])
+	stormkit.Config()
+
+	deploy, err := Deploy(paramDeploy)
+
+	assert.Equal(t, &model.MockDeploy, deploy)
+	assert.Nil(t, err)
+}
+
+func TestDeploy403(t *testing.T) {
+	paramDeploy := model.Deploy{
+		AppID:  "12345",
+		Env:    "env",
+		Branch: "branch",
+	}
+
+	s := testutils.ServerMock(DeployAPI, nil, http.StatusForbidden)
+	defer s.Close()
+
+	viper.Set("app.server", s.URL[7:])
+	stormkit.Config()
+
+	deploy, err := Deploy(paramDeploy)
+
+	assert.Nil(t, deploy)
+	assert.Equal(t, `Error while doing request (response: 403 Forbidden)`, err.Error())
+}

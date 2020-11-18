@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -40,6 +41,40 @@ func DeployByID(appID, id string) (*model.SingleDeploy, error) {
 	body, err := ioutil.ReadAll(response.Body)
 
 	var d model.SingleDeploy
+	err = json.Unmarshal(body, &d)
+
+	return &d, err
+}
+
+// Deploy calls the stormkit http api for start a deploy of a determinate
+// branch in an environment of an application
+func Deploy(d model.Deploy) (*model.Deploy, error) {
+
+	b, err := json.Marshal(d)
+	if err != nil {
+		return nil, err
+	}
+
+	// get stormkit http client add build request
+	c := stormkit.GetClient()
+	request, err := stormkit.Post(DeployAPI, bytes.NewReader(b))
+	if err != nil {
+		return nil, err
+	}
+
+	response, err := c.Do(request)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("Error while doing request (response: %s)", response.Status)
+	}
+
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+
 	err = json.Unmarshal(body, &d)
 
 	return &d, err
