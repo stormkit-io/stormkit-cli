@@ -65,6 +65,35 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 // deployParams creates the deployment struct via the cli params
 func deployParams(args []string) (*model.Deploy, error) {
 	// check if both args (env, branch) are present
+	if interactive {
+		envs, err := api.Envs(stormkit.GetEngineAppID())
+		if err != nil {
+			return err
+		}
+
+		prompt := promptui.Select{
+			Label: "Select env (branch taken from env config)",
+			Items: envs.Names(),
+		}
+
+		a, _, err := prompt.Run()
+
+		if err != nil {
+			return err
+		}
+
+		d := model.Deploy{
+			AppID:  stormkit.GetEngineAppID(),
+			Env:    envs.Envs[a].Env,
+			Branch: envs.Envs[a].Branch,
+		}
+
+		deploy, err := api.Deploy(d)
+
+		fmt.Printf("Deploy ID: %s\n", deploy.ID)
+		return nil
+	}
+
 	if len(args) < 2 {
 		return nil, fmt.Errorf("not enought arguments")
 	}
