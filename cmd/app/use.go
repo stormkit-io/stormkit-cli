@@ -10,7 +10,8 @@ import (
 
 // useCmd represents the use command
 var useCmd = &cobra.Command{
-	Use:   "use",
+	Use:   "use <app_id>",
+	Args:  cobra.ExactArgs(1),
 	Short: "Chose an application via app id",
 	Long: `Choose an application by providing the application id. The chosen application will be cached and will be used as the default application for subsequent commands.
 

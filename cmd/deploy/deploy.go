@@ -12,7 +12,7 @@ import (
 
 // deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
-	Use:   "deploy",
+	Use:   "deploy <env> <branch>",
 	Short: "Initiate a deployment process",
 	Long:  `Initiate a deployment process by providing the environment and branch names. The specified environment will be used to read the configuration to use while building the given branch.`,
 	RunE:  runDeploy,
