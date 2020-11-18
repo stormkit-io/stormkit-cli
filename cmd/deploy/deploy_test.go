@@ -15,6 +15,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func prepareDeployCmd() *cobra.Command {
+	c := cobra.Command{}
+	c.Flags().Bool(interactiveFlag, false, "")
+
+	return &c
+}
+
 func runDeployInit() (*httptest.Server, *cobra.Command) {
 	j, _ := json.Marshal(model.MockDeploy)
 	s := testutils.ServerMock(api.API.Deploy, j, http.StatusOK)
@@ -23,18 +30,27 @@ func runDeployInit() (*httptest.Server, *cobra.Command) {
 	viper.Set("app.engine.app_id", model.MockDeploy.AppID)
 	stormkit.Config()
 
-	cmd := cobra.Command{}
-
-	return s, &cmd
+	return s, prepareDeployCmd()
 }
 
-func TestRunDeployNoArgs(t *testing.T) {
+func TestRunDeployNoFlag(t *testing.T) {
 	viper.Set("app.server", "")
 	stormkit.Config()
 
 	cmd := cobra.Command{}
 	args := []string{}
 	err := runDeploy(&cmd, args)
+
+	assert.Equal(t, "flag accessed but not defined: interactive", err.Error())
+}
+
+func TestRunDeployNoArgs(t *testing.T) {
+	viper.Set("app.server", "")
+	stormkit.Config()
+
+	cmd := prepareDeployCmd()
+	args := []string{}
+	err := runDeploy(cmd, args)
 
 	assert.Equal(t, "not enought arguments", err.Error())
 }
@@ -43,9 +59,9 @@ func TestRunDeployNoServer(t *testing.T) {
 	viper.Set("app.server", "")
 	stormkit.Config()
 
-	cmd := cobra.Command{}
+	cmd := prepareDeployCmd()
 	args := []string{"prod", "master"}
-	err := runDeploy(&cmd, args)
+	err := runDeploy(cmd, args)
 
 	assert.Equal(t, `Post "http:///app/deploy": http: no Host in request URL`, err.Error())
 }
