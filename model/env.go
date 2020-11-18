@@ -16,3 +16,8 @@ type Env struct {
 		Verified bool `json:"verified"`
 	}
 }
+
+// EnvsArray array of environments of an application
+type EnvsArray struct {
+	Envs []Env `json:"envs"`
+}
