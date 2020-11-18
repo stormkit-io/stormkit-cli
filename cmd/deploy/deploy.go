@@ -77,7 +77,6 @@ func deployParams(args []string) (*model.Deploy, error) {
 		}
 
 		a, _, err := prompt.Run()
-
 		if err != nil {
 			return err
 		}
@@ -89,6 +88,9 @@ func deployParams(args []string) (*model.Deploy, error) {
 		}
 
 		deploy, err := api.Deploy(d)
+		if err != nil {
+			return err
+		}
 
 		fmt.Printf("Deploy ID: %s\n", deploy.ID)
 		return nil
