@@ -65,66 +65,6 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 // deployParams creates the deployment struct via the cli params
 func deployParams(args []string) (*model.Deploy, error) {
 	// check if both args (env, branch) are present
-	if interactive {
-		envs, err := api.Envs(stormkit.GetEngineAppID())
-		if err != nil {
-			return err
-		}
-
-		envPrompt := promptui.Select{
-			Label: "Select env",
-			Items: envs.Names(),
-		}
-
-		envIndex, env, err := envPrompt.Run()
-		if err != nil {
-			return err
-		}
-
-		path, err := utils.GitRoot()
-		if err != nil {
-			return err
-		}
-		r, err := git.PlainOpen(path)
-		if err != nil {
-			return err
-		}
-		branches, err := utils.GitBranchesNames(r)
-		if err != nil {
-			return err
-		}
-		branchesS := []string{"default"}
-		branchesS = append(branchesS, branches...)
-
-		branchPrompt := promptui.SelectWithAdd{
-			Label:    "Select deploy branch",
-			Items:    branchesS,
-			AddLabel: "Other",
-		}
-
-		branchIndex, branch, err := branchPrompt.Run()
-		if err != nil {
-			return err
-		}
-		if branchIndex == 0 {
-			branch = envs.Envs[envIndex].Branch
-		}
-
-		d := model.Deploy{
-			AppID:  stormkit.GetEngineAppID(),
-			Env:    env,
-			Branch: branch,
-		}
-
-		deploy, err := api.Deploy(d)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("Deploy ID: %s\n", deploy.ID)
-		return nil
-	}
-
 	if len(args) < 2 {
 		return nil, fmt.Errorf("not enought arguments")
 	}
