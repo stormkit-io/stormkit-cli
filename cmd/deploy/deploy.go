@@ -3,12 +3,14 @@ package deploy
 import (
 	"fmt"
 
+	"github.com/go-git/go-git/v5"
 	"github.com/manifoldco/promptui"
 	"github.com/spf13/cobra"
 	"github.com/stormkit-io/stormkit-cli/api"
 	"github.com/stormkit-io/stormkit-cli/cmd"
 	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
+	"github.com/stormkit-io/stormkit-cli/utils"
 )
 
 // interactiveFlag
@@ -39,20 +41,49 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		prompt := promptui.Select{
-			Label: "Select env (branch taken from env config)",
+		envPrompt := promptui.Select{
+			Label: "Select env",
 			Items: envs.Names(),
 		}
 
-		a, _, err := prompt.Run()
+		envIndex, env, err := envPrompt.Run()
 		if err != nil {
 			return err
 		}
 
+		path, err := utils.GitRoot()
+		if err != nil {
+			return err
+		}
+		r, err := git.PlainOpen(path)
+		if err != nil {
+			return err
+		}
+		branches, err := utils.GitBranchesNames(r)
+		if err != nil {
+			return err
+		}
+		branchesS := []string{"default"}
+		branchesS = append(branchesS, branches...)
+
+		branchPrompt := promptui.SelectWithAdd{
+			Label:    "Select deploy branch",
+			Items:    branchesS,
+			AddLabel: "Other",
+		}
+
+		branchIndex, branch, err := branchPrompt.Run()
+		if err != nil {
+			return err
+		}
+		if branchIndex == 0 {
+			branch = envs.Envs[envIndex].Branch
+		}
+
 		d := model.Deploy{
 			AppID:  stormkit.GetEngineAppID(),
-			Env:    envs.Envs[a].Env,
-			Branch: envs.Envs[a].Branch,
+			Env:    env,
+			Branch: branch,
 		}
 
 		deploy, err := api.Deploy(d)
