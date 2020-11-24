@@ -82,3 +82,13 @@ func TestRunDeploy(t *testing.T) {
 	assert.Equal(t, expectedOutput, output)
 
 }
+
+func TestDeployInteractiveNoServer(t *testing.T) {
+	viper.Set("app.server", "")
+	stormkit.Config()
+
+	d, err := deployInteractive()
+
+	assert.Nil(t, d)
+	assert.Equal(t, `Get "http:///app/12346/envs": http: no Host in request URL`, err.Error())
+}
