@@ -151,6 +151,155 @@ func TestRunEnvPrompt(t *testing.T) {
 	envPrompt = ep
 }
 
+// mockPrompt is mock implementation of prompt interface for
+// testing of function with promptui.Prompt
+type mockPrompt struct {
+	S string
+	E error
+}
+
+// Run method of mockPromptSelect for implement promptSelect
+func (p *mockPrompt) Run() (string, error) {
+	return p.S, p.E
+}
+
+func TestRunBranchPrompt(t *testing.T) {
+	// save branchPrompt original function
+	bp := branchPrompt
+
+	// prepare mockPrompt and expected data
+	stormkit.RepoPath = ""
+	m := mockPrompt{}
+	m.S = "helo"
+	m.E = nil
+	branchPrompt = func() prompt {
+		return &m
+	}
+
+	// execute runBranchPrompt
+	b, err := runBranchPrompt(m.S)
+
+	// check test result
+	assert.Equal(t, m.S, b)
+	assert.Equal(t, m.E, err)
+
+	// restore original branchPrompt function
+	branchPrompt = bp
+}
+
+func TestRunBranchPromptError(t *testing.T) {
+	// save branchPrompt original function
+	bp := branchPrompt
+
+	// prepare mockData
+	stormkit.RepoPath = ""
+	m := mockPrompt{}
+	m.S = ""
+	m.E = fmt.Errorf("error")
+	branchPrompt = func() prompt {
+		return &m
+	}
+
+	// execute runBranchPrompt
+	b, err := runBranchPrompt(m.S)
+
+	// check test result
+	assert.Equal(t, m.S, b)
+	assert.Equal(t, m.E, err)
+
+	// restore ogiginal branch Prompt
+	branchPrompt = bp
+}
+
+// mockSelectWithAdd is mock implementation of prompt interface for
+// testing of function with promptui.Prompt
+type mockSelectWithAdd struct {
+	I int
+	S string
+	E error
+}
+
+// Run method of mockSelectWithAdd for implement promptSelect
+func (p *mockSelectWithAdd) Run() (int, string, error) {
+	return p.I, p.S, p.E
+}
+
+func TestRunBranchPromptSelectError(t *testing.T) {
+	// save branchPrompt original function
+	bp := branchSelectWithAdd
+
+	// prepare mockData
+	stormkit.RepoPath = "./../.."
+	m := mockSelectWithAdd{}
+	m.I = -1
+	m.S = ""
+	m.E = fmt.Errorf("error")
+	branchSelectWithAdd = func(b []string) selectWithAdd {
+		return &m
+	}
+
+	// execute runBranchPrompt
+	b, err := runBranchPrompt(m.S)
+
+	// check test result
+	assert.Equal(t, "", b)
+	assert.Equal(t, m.E, err)
+
+	// restore ogiginal branch Prompt
+	branchSelectWithAdd = bp
+}
+
+func TestRunBranchPromptSelectDefault(t *testing.T) {
+	// save branchPrompt original function
+	bp := branchSelectWithAdd
+
+	// prepare mockData
+	stormkit.RepoPath = "./../.."
+	m := mockSelectWithAdd{}
+	m.I = 0
+	m.S = ""
+	m.E = nil
+	branchSelectWithAdd = func(b []string) selectWithAdd {
+		return &m
+	}
+	expectedBranch := "branch"
+
+	// execute runBranchPrompt
+	b, err := runBranchPrompt(expectedBranch)
+
+	// check test result
+	assert.Equal(t, expectedBranch, b)
+	assert.Nil(t, err)
+
+	// restore ogiginal branch Prompt
+	branchSelectWithAdd = bp
+}
+
+func TestRunBranchPromptSelect(t *testing.T) {
+	// save branchPrompt original function
+	bp := branchSelectWithAdd
+
+	// prepare mockData
+	stormkit.RepoPath = "./../.."
+	m := mockSelectWithAdd{}
+	m.I = 1
+	m.S = "helo"
+	m.E = nil
+	branchSelectWithAdd = func(b []string) selectWithAdd {
+		return &m
+	}
+
+	// execute runBranchPrompt
+	b, err := runBranchPrompt("hy")
+
+	// check test result
+	assert.Equal(t, m.S, b)
+	assert.Nil(t, err)
+
+	// restore ogiginal branch Prompt
+	branchSelectWithAdd = bp
+}
+
 func TestDeployInteractiveNoServer(t *testing.T) {
 	viper.Set("app.server", "")
 	stormkit.Config()

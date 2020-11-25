@@ -101,23 +101,43 @@ func runEnvPrompt(envs *model.EnvsArray) (int, error) {
 	return i, nil
 }
 
+// prompt is abstraction of promptui.Prompt for testing, while
+// mocking the prompt Run() function
+type prompt interface {
+	Run() (string, error)
+}
+
+// branchPrompt build the prompt for branch choice
+var branchPrompt = func() prompt {
+	return &promptui.Prompt{
+		Label: "Branch",
+	}
+}
+
+type selectWithAdd interface {
+	Run() (int, string, error)
+}
+
+var branchSelectWithAdd = func(branches []string) selectWithAdd {
+	return &promptui.SelectWithAdd{
+		Label:    "Branch",
+		Items:    branches,
+		AddLabel: "Other",
+	}
+}
+
 // runBranchPrompt check if command executed inside a git repository
 // directory, if not ask the branch manually otherways ask to select
 // a branch of the repository (allowed also default env branch, or
 // other branch, only remote branch).
 func runBranchPrompt(defaultBranch string) (string, error) {
-	// get git repository root path
-	path, err := utils.GitRoot()
-	if err != nil {
+	if len(stormkit.RepoPath) == 0 {
 		// if no git root path ask manually branch
-		branchPrompt := promptui.Prompt{
-			Label: "Branch",
-		}
-		return branchPrompt.Run()
+		return branchPrompt().Run()
 	}
 
 	// get repository
-	r, err := git.PlainOpen(path)
+	r, err := git.PlainOpen(stormkit.RepoPath)
 	if err != nil {
 		return "", err
 	}
@@ -131,15 +151,8 @@ func runBranchPrompt(defaultBranch string) (string, error) {
 	// inserting "default" at index 0
 	branches = append([]string{"default"}, branches...)
 
-	// building branch prompt
-	branchPrompt := promptui.SelectWithAdd{
-		Label:    "Select branch to deploy",
-		Items:    branches,
-		AddLabel: "Other",
-	}
-
 	// running branch prompt
-	branchIndex, branch, err := branchPrompt.Run()
+	branchIndex, branch, err := branchSelectWithAdd(branches).Run()
 	if err != nil {
 		return "", err
 	}
