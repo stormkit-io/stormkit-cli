@@ -77,16 +77,23 @@ func deployParams(args []string) (*model.Deploy, error) {
 	}, nil
 }
 
-// runEnvPrompt asks to chose between all the availables envs
-func runEnvPrompt(envs *model.EnvsArray) (int, error) {
-	// create envPrompt
-	envPrompt := promptui.Select{
+// promptSelect is abstraction of promptui.Select for testing
+type promptSelect interface {
+	Run() (int, string, error)
+}
+
+// envPrompt build the select prompt for enviroment choice
+var envPrompt = func(envs *model.EnvsArray) promptSelect {
+	return &promptui.Select{
 		Label: "Select env",
 		Items: envs.Names(),
 	}
+}
 
+// runEnvPrompt asks to chose between all the availables envs
+func runEnvPrompt(envs *model.EnvsArray) (int, error) {
 	// run Env prompt
-	i, _, err := envPrompt.Run()
+	i, _, err := envPrompt(envs).Run()
 	if err != nil {
 		return -1, err
 	}
