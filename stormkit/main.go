@@ -44,6 +44,9 @@ var ioutilReadFile = ioutil.ReadFile
 // globalConfig is the active general configuration
 var globalConfig = GlobalConfig{}
 
+// RepoPath is the root path of the repository
+var RepoPath string
+
 // configFile is the local folder configuration file
 var configFile *ConfigFile
 
@@ -62,6 +65,7 @@ func Config() {
 
 // ConfigWithPath configure the system for queries via viper (config file)
 func ConfigWithPath(repoPath string) {
+	RepoPath = repoPath
 	if len(repoPath) > 0 {
 		err := loadStormkitConfig(repoPath)
 
