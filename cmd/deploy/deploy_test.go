@@ -34,6 +34,18 @@ func runDeployInit() (*httptest.Server, *cobra.Command) {
 	return s, prepareDeployCmd()
 }
 
+func runEnvInit() *httptest.Server {
+	j, _ := json.Marshal(model.MockEnvsArray)
+	url := fmt.Sprintf(api.API.Envs, model.MockDeploy.AppID)
+	s := testutils.ServerMock(url, j, http.StatusOK)
+
+	viper.Set("app.server", s.URL[7:])
+	viper.Set("app.engine.app_id", model.MockDeploy.AppID)
+	stormkit.Config()
+
+	return s
+}
+
 func TestRunDeployNoFlag(t *testing.T) {
 	viper.Set("app.server", "")
 	stormkit.Config()
@@ -308,4 +320,115 @@ func TestDeployInteractiveNoServer(t *testing.T) {
 
 	assert.Nil(t, d)
 	assert.Equal(t, `Get "http:///app/12346/envs": http: no Host in request URL`, err.Error())
+}
+
+func TestDeployInteractiveEnvError(t *testing.T) {
+	// init web server env
+	s := runEnvInit()
+	defer s.Close()
+
+	// save envPrompt original function, init mock data and envPrompt function
+	ep := envPrompt
+	m := mockPromptSelect{
+		I: 0,
+		S: "",
+		E: fmt.Errorf("error"),
+	}
+	envPrompt = func(envs *model.EnvsArray) promptSelect {
+		return &m
+	}
+
+	// execute test
+	d, err := deployInteractive()
+
+	// check test result
+	assert.Nil(t, d)
+	assert.Equal(t, m.E, err)
+
+	// restore original envPrompt function
+	envPrompt = ep
+}
+
+func TestDeployInteractiveBranchError(t *testing.T) {
+	// init web server env
+	s := runEnvInit()
+	defer s.Close()
+
+	// save prompts original functions
+	ep := envPrompt
+	bp := branchSelectWithAdd
+
+	// init mock prompts
+	me := mockPromptSelect{
+		I: 0,
+		S: "env",
+		E: nil,
+	}
+	ms := mockSelectWithAdd{
+		I: -1,
+		S: "",
+		E: fmt.Errorf("error"),
+	}
+	envPrompt = func(envs *model.EnvsArray) promptSelect {
+		return &me
+	}
+	branchSelectWithAdd = func(b []string) selectWithAdd {
+		return &ms
+	}
+
+	// execute tests
+	d, err := deployInteractive()
+
+	// check tests results
+	assert.Nil(t, d)
+	assert.Equal(t, ms.E, err)
+
+	// restore originial prompts functions
+	envPrompt = ep
+	branchSelectWithAdd = bp
+}
+
+func TestDeployInteractiveBranch(t *testing.T) {
+	// init web server env
+	s := runEnvInit()
+	defer s.Close()
+
+	// save prompts original functions
+	ep := envPrompt
+	bp := branchSelectWithAdd
+
+	// init mock prompts
+	me := mockPromptSelect{
+		I: 0,
+		S: "env",
+		E: nil,
+	}
+	ms := mockSelectWithAdd{
+		I: 1,
+		S: "master",
+		E: nil,
+	}
+	envPrompt = func(envs *model.EnvsArray) promptSelect {
+		return &me
+	}
+	branchSelectWithAdd = func(b []string) selectWithAdd {
+		return &ms
+	}
+	// init expected deploy object
+	expectedDeploy := model.Deploy{
+		AppID:  stormkit.GetEngineAppID(),
+		Env:    me.S,
+		Branch: ms.S,
+	}
+
+	// execute tests
+	d, err := deployInteractive()
+
+	// check tests results
+	assert.Equal(t, expectedDeploy, *d)
+	assert.Nil(t, err)
+
+	// restore originial prompts functions
+	envPrompt = ep
+	branchSelectWithAdd = bp
 }
