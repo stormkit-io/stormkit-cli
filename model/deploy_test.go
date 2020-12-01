@@ -29,6 +29,20 @@ func TestLogDifferenceEquals(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestLogDifferenceAppend(t *testing.T) {
+	d := Deploy{
+		AppID: "123",
+		Logs:  []Log{{Message: "helo"}},
+	}
+	newD := d
+	newD.Logs = []Log{{Message: "helo world"}}
+
+	s, err := d.LogDifference(&newD)
+
+	assert.Equal(t, " world", s)
+	assert.Nil(t, err)
+}
+
 func TestLogDifference(t *testing.T) {
 	d := Deploy{
 		AppID: "123",
