@@ -16,6 +16,9 @@ import (
 // interactiveFlag
 const interactiveFlag = "interactive"
 
+// watchFlag
+const watchFlag = "watch"
+
 // deployCmd represents the deploy command
 var deployCmd = &cobra.Command{
 	Use:   "deploy <env> <branch>",
@@ -27,6 +30,7 @@ var deployCmd = &cobra.Command{
 func init() {
 	cmd.GetRootCmd().AddCommand(deployCmd)
 	deployCmd.Flags().BoolP(interactiveFlag, "i", false, "Use command as interactive")
+	deployCmd.Flags().BoolP(watchFlag, "w", false, "Watch the deploy (print real time logs)")
 }
 
 // runDeploy executes the deploy command, it checks if use interactive or
@@ -55,6 +59,11 @@ func runDeploy(cmd *cobra.Command, args []string) error {
 	deploy, err := api.Deploy(*d)
 	if err != nil {
 		return err
+	}
+
+	watch, err := cmd.Flags().GetBool(watchFlag)
+	if watch {
+		api.WatchDeploy(deploy.ID)
 	}
 
 	// print deploy id
