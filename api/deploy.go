@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/stormkit-io/stormkit-cli/model"
 	"github.com/stormkit-io/stormkit-cli/stormkit"
@@ -78,4 +79,41 @@ func Deploy(d model.Deploy) (*model.Deploy, error) {
 	err = json.Unmarshal(body, &d)
 
 	return &d, err
+}
+
+// WatchDeploy print the logs of the deploy
+func WatchDeploy(deployID string) error {
+	var oldDeploy model.Deploy
+
+	for {
+		d, err := DeployByID(stormkit.GetEngineAppID(), deployID)
+		if err != nil {
+			return err
+		}
+
+		log, err := oldDeploy.LogDifference(&d.Deploy)
+		if err != nil {
+			return err
+		}
+
+		fmt.Print(log)
+
+		oldDeploy = d.Deploy
+
+		if !d.Deploy.IsRunning {
+			break
+		}
+		time.Sleep(time.Second * 2)
+	}
+
+	if l := oldDeploy.LastLog(); l != nil {
+		if l.Status {
+			fmt.Println("\n\nBuild Success!")
+			return nil
+		} else {
+			return fmt.Errorf("\n\nerror while building!")
+		}
+	}
+
+	return fmt.Errorf("\n\nno logs available")
 }
