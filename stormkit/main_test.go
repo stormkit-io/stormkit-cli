@@ -77,6 +77,7 @@ app:
 		ConfigWithPath(".")
 	})
 
+	assert.Equal(t, ".", RepoPath)
 	assert.Equal(t, "", re)
 }
 
@@ -101,6 +102,7 @@ app:
 		ConfigWithPath("./test")
 	})
 
+	assert.Equal(t, "./test", RepoPath)
 	assert.Equal(t, "there are many apps in the config file (using the first)\n", re)
 }
 
