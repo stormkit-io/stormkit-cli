@@ -4,7 +4,7 @@ import path from "node:path";
 import fs from "node:fs";
 import cp from "node:child_process";
 import express from "express";
-import chalk from "chalk";
+import { green, blue } from "colorette";
 
 const wrapper = `
 const serverless = require("@stormkit/serverless");
@@ -189,14 +189,12 @@ class DevServer {
 
     app.listen(this.config.port!, this.config.host!, () => {
       console.log(
-        `Server running at ${chalk.green(
+        `Server running at ${green(
           `http://${this.config.host}:${this.config.port}/`
         )}`
       );
 
-      console.log(
-        `Listening changes on directory: ${chalk.blue(this.config.dir)}`
-      );
+      console.log(`Listening changes on directory: ${blue(this.config.dir!)}`);
     });
   }
 }

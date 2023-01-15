@@ -10,6 +10,8 @@ export default defineConfig({
     dir: "dist",
     format: "cjs",
     exports: "auto",
+    banner: "#!/usr/bin/env node",
   },
-  plugins: [typescript()],
+
+  plugins: [typescript(), commonjs(), nodeResolve(), jsonResolve()],
 });
