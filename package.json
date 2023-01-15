@@ -1,0 +1,41 @@
+{
+  "name": "@stormkit/cli",
+  "version": "0.7.2",
+  "description": "Stormkit Command Line Interface",
+  "main": "index.js",
+  "bin": {
+    "stormkit": "./index.js"
+  },
+  "scripts": {
+    "bin": "ts-node src/main.ts",
+    "build": "rm -rf dist/ && rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
+    "test": "echo 1",
+    "np": "npm run build && np --no-publish && cp ./package.json ./dist/package.json && cd ./dist && npm publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stormkit-io/stormkit-cli.git"
+  },
+  "author": "@stormkitio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stormkit-io/stormkit-cli/issues"
+  },
+  "homepage": "https://github.com/stormkit-io/stormkit-cli#readme",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.0",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@stormkit/serverless": "^1.0.0",
+    "@types/express": "^4.17.15",
+    "@types/yargs": "^17.0.19",
+    "chalk": "^4.1.2",
+    "express": "^4.18.2",
+    "np": "^7.6.3",
+    "rollup": "^3.10.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
+    "yargs": "^17.6.2"
+  }
+}
