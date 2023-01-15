@@ -17,7 +17,7 @@
     "url": "git+https://github.com/stormkit-io/stormkit-cli.git"
   },
   "author": "@stormkitio",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/stormkit-io/stormkit-cli/issues"
   },
