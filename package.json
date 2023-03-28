@@ -8,8 +8,7 @@
   },
   "scripts": {
     "bin": "ts-node src/main.ts",
-    "build": "rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
-    "dev": "ts-node src/main.ts api -d e2e",
+    "build": "rm -rf dist/ && rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript",
     "test": "echo 1",
     "np": "npm run build && np --no-publish && cp ./package.json ./dist/package.json && cd ./dist && npm publish"
   },
