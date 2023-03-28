@@ -150,7 +150,6 @@ class DevServer {
         .replace(/(\r|\n)/g, '')
         .replace(":root", root.replace(/\\/g, '/'))
         .replace(":event", JSON.stringify(request));
-        console.log(cmd);
       try {
         const { stdout, stderr } = spawn.sync('ts-node', ['--compilerOptions', `{"module":"commonjs"}`, '-e', cmd, '--transpileOnly']);
         const { data, logs } = parseResponse(stdout.toString('utf-8'));
