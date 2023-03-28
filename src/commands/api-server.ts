@@ -2,16 +2,15 @@ import type { RequestEvent, ServerlessResponse } from "@stormkit/serverless";
 import http from "node:http";
 import path from "node:path";
 import fs from "node:fs";
-import cp from "node:child_process";
 import express from "express";
 import { green, blue } from "colorette";
+import spawn from "cross-spawn";
 
 const wrapper = `
 const serverless = require("@stormkit/serverless");
-const root = ":root"
-
+const root = ":root";
 serverless(undefined, "stormkit:api")(:event, root).then((data: any) => { 
-  console.log(JSON.stringify(data))
+  console.log(JSON.stringify(data));
 })
 `;
 
@@ -147,20 +146,19 @@ class DevServer {
     app.all("*", async (req, res) => {
       const request = await this._transformToRequestEvent(req);
       const root = path.join(rootDir, this.config.dir || "");
-
-      cp.exec(
-        `ts-node --compilerOptions '{ "module": "commonjs" }' -e '${wrapper
-          .replace(":root", root)
-          .replace(":event", JSON.stringify(request))}' --transpileOnly`,
-        (_, stdout, stderr) => {
-          const { data, logs } = parseResponse(stdout);
-
-          logs.forEach((l) => console.log(l));
-
-          if (!data) {
-            res.setHeader("Content-type", "text/html");
-            res.status(500);
-            res.send(`
+      const cmd = wrapper
+        .replace(/(\r|\n)/g, '')
+        .replace(":root", root.replace(/\\/g, '/'))
+        .replace(":event", JSON.stringify(request));
+        console.log(cmd);
+      try {
+        const { stdout, stderr } = spawn.sync('ts-node', ['--compilerOptions', `{"module":"commonjs"}`, '-e', cmd, '--transpileOnly']);
+        const { data, logs } = parseResponse(stdout.toString('utf-8'));
+        logs.forEach((l) => console.log(l));
+        if (!data) {
+          res.setHeader("Content-type", "text/html");
+          res.status(500);
+          res.send(`
               <!DOCTYPE html>
               <html lang="en">
                 <head>
@@ -168,23 +166,26 @@ class DevServer {
                 </head>
                 <body style="font-family: Monospace; font-size: 15px;">
                   <p style="max-width: 600px; padding: 4rem; background-color: #fafafa; margin: 0 auto;">
-                    ${stderr.replace("\n", "<br/>")}
+                    ${stderr.toString('utf-8').replace("\n", "<br/>")}
                   </p>
                 </body>
               </html>
             `);
-            res.end();
-            return;
-          }
-
-          Object.keys(data.headers || {}).forEach((key) => {
-            res.set(key, data.headers[key]);
-          });
-
-          res.status(data.status);
-          res.send(Buffer.from(data.buffer || "", "base64").toString("utf-8"));
+          res.end();
+          return;
         }
-      );
+
+        Object.keys(data.headers || {}).forEach((key) => {
+          res.set(key, data.headers[key]);
+        });
+
+        res.status(data.status);
+        res.send(Buffer.from(data.buffer || "", "base64").toString("utf-8"));
+      }
+      catch (err) {
+        console.log('err:', err)
+        console.error('execute ts-node error');
+      }
     });
 
     app.listen(this.config.port!, this.config.host!, () => {
