@@ -147,13 +147,23 @@ class DevServer {
       const request = await this._transformToRequestEvent(req);
       const root = path.join(rootDir, this.config.dir || "");
       const cmd = wrapper
-        .replace(/(\r|\n)/g, '')
-        .replace(":root", root.replace(/\\/g, '/'))
+        .replace(/(\r|\n)/g, "")
+        .replace(":root", root.replace(/\\/g, "/"))
         .replace(":event", JSON.stringify(request));
+
       try {
-        const { stdout, stderr } = spawn.sync('ts-node', ['--compilerOptions', `{"module":"commonjs"}`, '-e', cmd, '--transpileOnly']);
-        const { data, logs } = parseResponse(stdout.toString('utf-8'));
+        const { stdout, stderr } = spawn.sync("ts-node", [
+          "--compilerOptions",
+          `{"module":"commonjs"}`,
+          "-e",
+          cmd,
+          "--transpileOnly",
+        ]);
+
+        const { data, logs } = parseResponse(stdout.toString("utf-8"));
+
         logs.forEach((l) => console.log(l));
+
         if (!data) {
           res.setHeader("Content-type", "text/html");
           res.status(500);
@@ -165,7 +175,7 @@ class DevServer {
                 </head>
                 <body style="font-family: Monospace; font-size: 15px;">
                   <p style="max-width: 600px; padding: 4rem; background-color: #fafafa; margin: 0 auto;">
-                    ${stderr.toString('utf-8').replace("\n", "<br/>")}
+                    ${stderr.toString("utf-8").replace("\n", "<br/>")}
                   </p>
                 </body>
               </html>
@@ -180,10 +190,8 @@ class DevServer {
 
         res.status(data.status);
         res.send(Buffer.from(data.buffer || "", "base64").toString("utf-8"));
-      }
-      catch (err) {
-        console.log('err:', err)
-        console.error('execute ts-node error');
+      } catch (err) {
+        console.log("execute ts-node error err:", err);
       }
     });
 
