@@ -46,6 +46,14 @@ Usage:
 npm run dev:api -- --port 9090 --dir src/api
 ```
 
+## Testing locally
+
+Run the `bin` command in the scripts. For example to test the e2e folder:
+
+```
+npm run bin -- api -d e2e
+```
+
 ## License
 
 MIT
