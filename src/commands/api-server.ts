@@ -4,15 +4,12 @@ import path from "node:path";
 import fs from "node:fs";
 import express from "express";
 import { green, blue } from "colorette";
-import spawn from "cross-spawn";
+import sk from "@stormkit/serverless";
 
-const wrapper = `
-const serverless = require("@stormkit/serverless");
-const root = ":root";
-serverless(undefined, "stormkit:api")(:event, root).then((data: any) => { 
-  console.log(JSON.stringify(data));
-})
-`;
+const handler = (event: any, root: string): Promise<ServerlessResponse> => {
+  // @ts-ignore
+  return sk(undefined, "stormkit:api")(event, root);
+};
 
 interface DevServerConfig {
   // The port to listen
@@ -46,37 +43,6 @@ const rootDir = ((): string => {
 
   return dir;
 })();
-
-const parseResponse = (
-  res: string
-): { logs: string[]; data?: ServerlessResponse } => {
-  const lines = res.split("\n");
-  const logs: string[] = [];
-
-  let data: ServerlessResponse | undefined;
-
-  lines
-    .filter((line) => line)
-    .forEach((line) => {
-      try {
-        const parsed = JSON.parse(line);
-
-        if (
-          typeof parsed.buffer !== "undefined" &&
-          typeof parsed.headers !== "undefined"
-        ) {
-          data = parsed;
-          return;
-        } else {
-          logs.push(parsed);
-        }
-      } catch {
-        logs.push(line);
-      }
-    });
-
-  return { logs, data };
-};
 
 class DevServer {
   config: DevServerConfig;
@@ -146,43 +112,9 @@ class DevServer {
     app.all("*", async (req, res) => {
       const request = await this._transformToRequestEvent(req);
       const root = path.join(rootDir, this.config.dir || "");
-      const cmd = wrapper
-        .replace(/(\r|\n)/g, "")
-        .replace(":root", root.replace(/\\/g, "/"))
-        .replace(":event", JSON.stringify(request));
 
       try {
-        const { stdout, stderr } = spawn.sync("ts-node", [
-          "--compilerOptions",
-          `{"module":"commonjs"}`,
-          "-e",
-          cmd,
-          "--transpileOnly",
-        ]);
-
-        const { data, logs } = parseResponse(stdout.toString("utf-8"));
-
-        logs.forEach((l) => console.log(l));
-
-        if (!data) {
-          res.setHeader("Content-type", "text/html");
-          res.status(500);
-          res.send(`
-              <!DOCTYPE html>
-              <html lang="en">
-                <head>
-                  <title>Error 500</title>
-                </head>
-                <body style="font-family: Monospace; font-size: 15px;">
-                  <p style="max-width: 600px; padding: 4rem; background-color: #fafafa; margin: 0 auto;">
-                    ${stderr.toString("utf-8").replace("\n", "<br/>")}
-                  </p>
-                </body>
-              </html>
-            `);
-          res.end();
-          return;
-        }
+        const data = await handler(request, root.replace(/\\/g, "/"));
 
         Object.keys(data.headers || {}).forEach((key) => {
           res.set(key, data.headers[key]);
