@@ -6,8 +6,11 @@ import express from "express";
 import { green, blue } from "colorette";
 import sk from "@stormkit/serverless";
 
-const handler = (event: any, root: string): Promise<ServerlessResponse> => {
-  var tsNode = require("ts-node");
+const handler = (
+  event: RequestEvent,
+  root: string
+): Promise<ServerlessResponse> => {
+  const tsNode = require("ts-node");
 
   tsNode.createEsmHooks(
     tsNode.register({
@@ -19,6 +22,12 @@ const handler = (event: any, root: string): Promise<ServerlessResponse> => {
       transpileOnly: true,
     })
   );
+
+  Object.keys(require.cache).forEach((key) => {
+    if (key.includes(root)) {
+      delete require.cache[key];
+    }
+  });
 
   // @ts-ignore
   return sk(undefined, "stormkit:api")(event, root);
