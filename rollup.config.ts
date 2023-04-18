@@ -13,5 +13,13 @@ export default defineConfig({
     banner: "#!/usr/bin/env node",
   },
 
-  plugins: [typescript(), commonjs(), nodeResolve(), jsonResolve()],
+  plugins: [
+    typescript(),
+    commonjs({
+      // Required to use `require` instead of `commonJsRequire` for dynamic imports.
+      ignoreDynamicRequires: true,
+    }),
+    nodeResolve(),
+    jsonResolve(),
+  ],
 });

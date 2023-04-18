@@ -7,6 +7,19 @@ import { green, blue } from "colorette";
 import sk from "@stormkit/serverless";
 
 const handler = (event: any, root: string): Promise<ServerlessResponse> => {
+  var tsNode = require("ts-node");
+
+  tsNode.createEsmHooks(
+    tsNode.register({
+      // We need to ovewrite the `"type": "module"` specified in
+      // package.json.
+      moduleTypes: {
+        [`${root}/**/*`]: "cjs",
+      },
+      transpileOnly: true,
+    })
+  );
+
   // @ts-ignore
   return sk(undefined, "stormkit:api")(event, root);
 };
