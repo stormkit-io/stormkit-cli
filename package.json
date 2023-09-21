@@ -38,6 +38,6 @@
     "yargs": "^17.6.2"
   },
   "peerDependencies": {
-    "@stormkit/serverless": "^1.1.3"
+    "@stormkit/serverless": "^1.2.0"
   }
 }
