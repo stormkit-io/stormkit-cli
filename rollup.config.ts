@@ -8,7 +8,7 @@ export default defineConfig({
   input: { index: "src/main.ts" },
   output: {
     dir: "dist",
-    format: "esm",
+    format: "cjs",
     exports: "auto",
     banner: "#!/usr/bin/env node",
   },
