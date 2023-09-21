@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 import yargs from "yargs";
 import * as cmds from "./index";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 yargs()
   .scriptName("stormkit")
@@ -26,6 +29,19 @@ yargs()
         port: argv.port ? Number(argv.port) : undefined,
         dir: typeof argv.dir === "string" ? argv.dir : undefined,
       }).listen();
+    },
+  })
+  .command({
+    command: "env pull",
+    describe: "Pull environment variables from the environment.",
+    builder: {
+      debug: {
+        alias: "d",
+        describe: "Prints additional logs.",
+      },
+    },
+    handler(argv) {
+      cmds.envPull({ debug: argv.debug as boolean });
     },
   })
   .parse(process.argv.slice(2));
