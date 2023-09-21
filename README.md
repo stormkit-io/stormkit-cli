@@ -15,6 +15,29 @@ pnpm install @stormkit/cli
 
 ## Options
 
+### env pull
+
+```
+stormkit env pull
+
+Pull environment variables from the environment.
+
+Options:
+      --help     Show help                                             [boolean]
+      --version  Show version number                                   [boolean]
+  -d, --debug    Prints additional logs.
+```
+
+Usage:
+
+1. Create an API Key from **Environments** > **Your environment** > **API Keys**. 
+2. Create a `.env` file in your project root.
+3. Add `SK_API_KEY=<your_api_key>` to the .env file
+
+```bash
+npx @stormkit/cli env pull
+```
+
 ### api
 
 ```
