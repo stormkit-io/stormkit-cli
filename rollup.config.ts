@@ -8,11 +8,10 @@ export default defineConfig({
   input: { index: "src/main.ts" },
   output: {
     dir: "dist",
-    format: "cjs",
+    format: "esm",
     exports: "auto",
     banner: "#!/usr/bin/env node",
   },
-
   plugins: [
     typescript(),
     commonjs({
