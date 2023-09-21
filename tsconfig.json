@@ -3,7 +3,7 @@
     "files": true
   },
   "compilerOptions": {
-    "lib": ["es6"],
+    "lib": ["es6", "DOM"],
     "allowJs": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
