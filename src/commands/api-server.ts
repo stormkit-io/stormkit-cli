@@ -29,8 +29,15 @@ const handler = (
     }
   });
 
-  // @ts-ignore
-  return sk(undefined, "stormkit:api")(event, root);
+  return new Promise((resolve, reject) => {
+    sk(root, "stormkit:api")(event, {}, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve(data);
+    });
+  });
 };
 
 interface DevServerConfig {
