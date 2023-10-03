@@ -1,6 +1,6 @@
 {
   "name": "@stormkit/cli",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "Stormkit Command Line Interface",
   "main": "index.js",
   "bin": {
