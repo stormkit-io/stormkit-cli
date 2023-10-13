@@ -55,8 +55,14 @@ const defaultConfig: DevServerConfig = {
   port: Number(process.env.SERVERLESS_PORT) || 3000,
 };
 
-const rootDir = ((): string => {
-  let dir = require?.main?.filename || process.cwd();
+const getRootFolder = (apiDir: string = "api") => {
+  const cwd = process.cwd();
+
+  if (fs.existsSync(path.join(cwd, apiDir))) {
+    return path.join(cwd, apiDir);
+  }
+
+  let dir = require?.main?.filename || cwd;
 
   if (dir.indexOf("node_modules") > -1) {
     return /^(.*?)node_modules/.exec(dir)?.[1] || dir;
@@ -70,8 +76,8 @@ const rootDir = ((): string => {
     dir = path.dirname(dir);
   }
 
-  return dir;
-})();
+  return path.join(dir, apiDir);
+};
 
 class DevServer {
   config: DevServerConfig;
@@ -137,10 +143,10 @@ class DevServer {
 
   listen(): void {
     const app = express();
+    const root = getRootFolder(this.config.dir);
 
     app.all("*", async (req, res) => {
       const request = await this._transformToRequestEvent(req);
-      const root = path.join(rootDir, this.config.dir || "");
 
       try {
         const data = await handler(request, root.replace(/\\/g, "/"));
