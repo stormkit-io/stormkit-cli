@@ -6,6 +6,7 @@ import jsonResolve from "@rollup/plugin-json";
 
 export default defineConfig({
   input: { index: "src/main.ts" },
+  external: ["vite"],
   output: {
     dir: "dist",
     format: "cjs",

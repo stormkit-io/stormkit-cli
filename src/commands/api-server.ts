@@ -2,6 +2,7 @@ import path from "node:path";
 import fs from "node:fs";
 import express from "express";
 import { green, blue } from "colorette";
+import { createServer as createViteServer } from "vite";
 import apiMiddleware from "@stormkit/serverless/middlewares";
 
 interface DevServerConfig {
@@ -59,36 +60,27 @@ class DevServer {
     this.config = config;
   }
 
-  listen(): void {
+  async listen(): Promise<void> {
     const app = express();
+
+    const vite = await createViteServer({
+      server: { middlewareMode: true },
+      appType: "custom",
+      optimizeDeps: {
+        disabled: true,
+      },
+    });
+
+    // use vite's connect instance as middleware
+    // if you use your own express router (express.Router()), you should use router.use
+    app.use(vite.middlewares);
 
     app.all(
       "*",
       apiMiddleware({
         middleware: "express",
         apiDir: getRootFolder(this.config.dir),
-        moduleLoader: (path) => {
-          const tsNode = require("ts-node");
-
-          tsNode.createEsmHooks(
-            tsNode.register({
-              // We need to ovewrite the `"type": "module"` specified in
-              // package.json.
-              moduleTypes: {
-                [`${path}/**/*`]: "cjs",
-              },
-              transpileOnly: true,
-            })
-          );
-
-          Object.keys(require.cache).forEach((key) => {
-            if (key.includes(path)) {
-              delete require.cache[key];
-            }
-          });
-
-          return require(path);
-        },
+        moduleLoader: vite.ssrLoadModule,
       })
     );
 
