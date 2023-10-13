@@ -152,10 +152,10 @@ class DevServer {
         const data = await handler(request, root.replace(/\\/g, "/"));
 
         Object.keys(data.headers || {}).forEach((key) => {
-          res.set(key, data.headers[key]);
+          res.set(key, data.headers?.[key]);
         });
 
-        res.status(data.status);
+        res.status(data.status || 200);
         res.send(Buffer.from(data.buffer || "", "base64").toString("utf-8"));
       } catch (err) {
         console.log("execute ts-node error err:", err);
