@@ -39,7 +39,7 @@
     "yargs": "^17.6.2"
   },
   "peerDependencies": {
-    "@stormkit/serverless": "^1.2.4",
+    "@stormkit/serverless": "^2.0.8",
     "vite": "^4.4.11"
   }
 }
