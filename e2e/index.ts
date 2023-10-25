@@ -1,5 +1,8 @@
 import http from "http";
 
 export default (req: http.IncomingMessage, res: http.ServerResponse) => {
-  res.end("Hello world!");
+  setTimeout(() => {
+    res.setHeader("Content-Type", "text/html");
+    res.end("Hello world!");
+  }, 250);
 };
